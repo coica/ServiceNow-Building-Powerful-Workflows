@@ -1,1 +1,0 @@
-All the Code snippet of ServiceNow Cookbook are in txt formate.

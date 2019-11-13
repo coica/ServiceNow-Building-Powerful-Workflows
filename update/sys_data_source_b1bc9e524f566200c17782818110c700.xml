@@ -7,6 +7,7 @@
         <csv_delimiter/>
         <database_name/>
         <database_port/>
+        <discard_arrays>true</discard_arrays>
         <expand_node_children>true</expand_node_children>
         <file_path>/import/hotelrooms.xml</file_path>
         <file_retrieval_method>HTTPS</file_retrieval_method>

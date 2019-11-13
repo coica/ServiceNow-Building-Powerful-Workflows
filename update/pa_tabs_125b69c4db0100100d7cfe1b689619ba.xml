@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="pa_tabs">
+    <pa_tabs action="INSERT_OR_UPDATE">
+        <canvas_page display_value="PA New Tab 2">9a5b69c4db0100100d7cfe1b689619b8</canvas_page>
+        <name>AC tab 2</name>
+        <page display_value="PA AC tab 2">165b69c4db0100100d7cfe1b689619b8</page>
+        <sys_class_name>pa_tabs</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-11-06 11:50:16</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>125b69c4db0100100d7cfe1b689619ba</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>AC tab 2</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>pa_tabs_125b69c4db0100100d7cfe1b689619ba</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-11-06 11:51:40</sys_updated_on>
+    </pa_tabs>
+</record_update>

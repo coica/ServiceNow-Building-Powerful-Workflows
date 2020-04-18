@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="scheduled_import_set">
     <scheduled_import_set action="INSERT_OR_UPDATE">
         <active>false</active>
+        <business_calendar/>
         <concurrent_import>false</concurrent_import>
         <condition/>
         <conditional>false</conditional>
         <data_source/>
+        <entered_time/>
         <map/>
         <name>Gardiner Hotels/Groups Import</name>
         <order/>
         <parent/>
         <partition_method/>
         <partition_script/>
+        <partition_size/>
         <post_script/>
         <post_script_bool>false</post_script_bool>
         <pre_script/>
@@ -36,6 +39,7 @@
         <sys_update_name>scheduled_import_set_fc4062de4fd26200c17782818110c719</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2016-10-08 17:39:20</sys_updated_on>
+        <time_zone/>
         <upgrade_safe>false</upgrade_safe>
     </scheduled_import_set>
 </record_update>

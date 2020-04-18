@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element extends="sys_import_set_row" label="Gardiner Hotels/Users" max_length="40" name="ldap_import" type="collection">
+    <element extends="sys_import_set_row" label="Gardiner Hotels/Users" max_length="40" name="ldap_import" sizeclass="0" type="collection">
         <element attributes="import_attribute_name=cn,edge_encryption_enabled=true" label="cn" max_length="40" name="u_cn" type="string"/>
         <element attributes="import_attribute_name=dn,edge_encryption_enabled=true" label="dn" max_length="255" name="u_dn" type="string"/>
         <element attributes="import_attribute_name=gidnumber,edge_encryption_enabled=true" label="gidnumber" max_length="40" name="u_gidnumber" type="string"/>

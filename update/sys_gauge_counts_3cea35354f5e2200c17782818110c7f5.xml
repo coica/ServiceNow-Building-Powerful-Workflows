@@ -7,7 +7,7 @@
         <order>20</order>
         <override_style/>
         <query table="x_hotel_maintenance">active=true^priority&gt;2^EQ<item endquery="false" field="active" goto="false" newquery="false" operator="=" or="false" value="true"/>
-            <item endquery="false" field="priority" goto="false" newquery="false" operator="&gt;" or="false" value="2"/>
+            <item display_value="2 - High" endquery="false" field="priority" goto="false" newquery="false" operator="&gt;" or="false" value="2"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </query>
         <script/>

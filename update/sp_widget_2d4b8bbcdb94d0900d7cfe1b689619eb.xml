@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[var c = this;
+	
+	c.myVariable2 = 'World';
+	
+	c.myFunction = function() {
+		alert(c.data.myVariable1 + " " + c.myVariable2);
+	}
+	
+	c.myVariable3 = '';
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.jumbotron {
+  background-color:#FFFFFF;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>acwidget1</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>ACWidget1</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+	data.myVariable1 = 'Hello';
+	data.myVariable4 = '';
+
+}]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-18 16:08:53</sys_created_on>
+        <sys_id>2d4b8bbcdb94d0900d7cfe1b689619eb</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>ACWidget1</sys_name>
+        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sp_widget_2d4b8bbcdb94d0900d7cfe1b689619eb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-18 16:56:14</sys_updated_on>
+        <template><![CDATA[<div class="container">
+  <div class="row">
+    <div class="col-md-4 menu">
+      <div class="affix">
+        <h2>${Overview}</h2>
+        <a href="#top">${Understand data and c}</a><br>
+        <a href="#what1">${What is contained in the variable data ?}</a><br>
+        <a href="#what2">${What is contained in the variable c ?}</a><br>
+        <a href="#options">${Understand options}</a><br> 
+        <a href="#what3">${What is contained in the variable options ?}</a><br>
+        <h2>myVariables</h2>
+        <ul>
+          <li>data.myVariable1: {{data.myVariable1}}</li>
+          <li>c.myVariable2: {{c.myVariable2}}</li>
+          <li>c.myVariable3: {{c.myVariable3}}</li>
+          <li>data.myVariable4: {{data.myVariable4}}</li>
+          <li>options.my_variable_5: {{options.my_variable_5}}</li>
+        </ul>
+
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="row">
+        <div class="jumbotron">
+          <a id="top"><h2>${Understand data and c}</h2></a>
+          <h4>Hello {{c.myVariable3}} {{data.myVariable4}}</h4>
+          <h5><i>Hello [c.myVariable3] [data.myVariable4]</i></h5>
+          <div>
+            <input ng-model="c.myVariable3" class="form-control m-b" placeholder="Type your First name [c.myVariable3]"/> 
+            <input ng-model="data.myVariable4" class="form-control m-b" placeholder="Type your Last name [data.myVariable4]"/> 
+          </div>
+
+          <button class="btn btn-primary m-b" ng-click="c.myFunction()">${Click here} [c.data.myVariable1 + c.myVariable2]</button>
+        </div>
+
+        <div class="jumbotron">
+          <a id="what1"><h2>${What is contained in the variable data ?}</h2></a>
+          <pre>{{data|json}}</pre>
+        </div>
+
+        <div class="jumbotron">
+          <a id="what2"><h2>${What is contained in the variable c ?}</h2></a>
+          <pre>{{c|json}}</pre>
+        </div>
+
+        <div class="jumbotron">
+          <a href="options"><h2>${Understand options}</h2></a>
+          <ol>
+            <li>ctrl + right click on the widget</li>
+            <li>Instance Options</li>
+            <li>Edit the option "My Variable 5"</li>
+          </ol>
+        </div>
+
+        <div class="jumbotron">
+          <a id="what3"><h2>${What is contained in the variable options ?}</h2></a>
+          <pre>{{options|json}}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

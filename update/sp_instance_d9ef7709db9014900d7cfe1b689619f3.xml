@@ -11,7 +11,7 @@
         <short_description/>
         <size>md</size>
         <sp_column display_value="1">19ef7709db9014900d7cfe1b689619f1</sp_column>
-        <sp_widget display_value="SP_AC_Tst_Com_Widget 1">4def3301db9014900d7cfe1b689619f8</sp_widget>
+        <sp_widget display_value="SP_AC_Tst_Com_Widget 1 INSTANCE">4def3301db9014900d7cfe1b689619f8</sp_widget>
         <sys_class_name>sp_instance</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-04-19 14:37:15</sys_created_on>

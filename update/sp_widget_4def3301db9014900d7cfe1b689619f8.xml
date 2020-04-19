@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function($rootScope,$scope) { var c = this; 
+        <client_script><![CDATA[function($rootScope,$scope) 
+{ var c = this; 
+ //
 $scope.name ="alain"; 
 $scope.call_widget2 = function(){
 														
 //alert($scope.name); 
 	$rootScope.$broadcast('mynameis', $scope.name); 
 } 
-} 
-]]></client_script>
+} ]]></client_script>
         <controller_as>c</controller_as>
         <css/>
         <data_table>sp_instance</data_table>
@@ -21,7 +22,7 @@ $scope.call_widget2 = function(){
         <id>sp_ac_tst_com_widget_1</id>
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
-        <name>SP_AC_Tst_Com_Widget 1</name>
+        <name>SP_AC_Tst_Com_Widget 1 INSTANCE</name>
         <option_schema/>
         <public>false</public>
         <roles/>
@@ -31,16 +32,25 @@ $scope.call_widget2 = function(){
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-04-19 14:37:15</sys_created_on>
         <sys_id>4def3301db9014900d7cfe1b689619f8</sys_id>
-        <sys_mod_count>2</sys_mod_count>
-        <sys_name>SP_AC_Tst_Com_Widget 1</sys_name>
+        <sys_mod_count>9</sys_mod_count>
+        <sys_name>SP_AC_Tst_Com_Widget 1 INSTANCE</sys_name>
         <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
         <sys_update_name>sp_widget_4def3301db9014900d7cfe1b689619f8</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-04-19 14:49:27</sys_updated_on>
-        <template><![CDATA[<div> <textarea ng-model="name">
+        <sys_updated_on>2020-04-19 20:32:19</sys_updated_on>
+        <template><![CDATA[<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">W1: enter your name</h4>
+  </div>
+  <div class="panel-body">
+    
+<div> <textarea ng-model="name">
   {{name}}</textarea> 
-  <button ng-click="call_widget2()">Call wiget 2 </button> </div> ]]></template>
+  <button ng-click="call_widget2()">Call wiget 2 </button> 
+</div> 
+  </div>
+</div>]]></template>
     </sp_widget>
 </record_update>

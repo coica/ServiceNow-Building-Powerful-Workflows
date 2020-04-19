@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_page">
+    <sp_page action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <css/>
+        <draft>false</draft>
+        <dynamic_title_structure/>
+        <id>sp_ac_widget4</id>
+        <internal>false</internal>
+        <public>false</public>
+        <roles/>
+        <short_description/>
+        <sys_class_name>sp_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-19 09:45:53</sys_created_on>
+        <sys_id>5d3dbecddbdcd0900d7cfe1b68961929</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>sp_ac_widget4</sys_name>
+        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sp_page_5d3dbecddbdcd0900d7cfe1b68961929</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-19 09:45:53</sys_updated_on>
+        <title>SP_AC_Widget4 - Test Page</title>
+    </sp_page>
+    <sys_translated_text action="delete_multiple" query="documentkey=5d3dbecddbdcd0900d7cfe1b68961929"/>
+</record_update>

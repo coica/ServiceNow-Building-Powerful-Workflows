@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_ng_pro_sp_widget">
+    <m2m_sp_ng_pro_sp_widget action="INSERT_OR_UPDATE">
+        <sp_angular_provider display_value="userInformation">6a696ef1db1c54900d7cfe1b68961960</sp_angular_provider>
+        <sp_widget display_value="SP_AC_Tst_Srv_Com_Widget2a">8152e2bddbd854900d7cfe1b6896193a</sp_widget>
+        <sys_class_name>m2m_sp_ng_pro_sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-21 16:47:16</sys_created_on>
+        <sys_id>19d07a39db1c54900d7cfe1b68961913</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>userInformation.SP_AC_Tst_Srv_Com_Widget2a</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>m2m_sp_ng_pro_sp_widget_19d07a39db1c54900d7cfe1b68961913</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-21 16:47:16</sys_updated_on>
+    </m2m_sp_ng_pro_sp_widget>
+</record_update>

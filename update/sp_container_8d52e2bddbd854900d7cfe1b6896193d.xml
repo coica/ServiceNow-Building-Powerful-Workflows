@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container">
+    <sp_container action="INSERT_OR_UPDATE">
+        <background_color/>
+        <background_image/>
+        <background_style>default</background_style>
+        <bootstrap_alt>false</bootstrap_alt>
+        <class_name/>
+        <container_class_name/>
+        <name>SP_AC_Tst_Srv_Com_Widget2a - Test Page - Container 1</name>
+        <order>1</order>
+        <sp_page display_value="sp_ac_tst_srv_com_widget2a">8d52e2bddbd854900d7cfe1b6896193b</sp_page>
+        <subheader>false</subheader>
+        <sys_class_name>sp_container</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-21 15:43:54</sys_created_on>
+        <sys_id>8d52e2bddbd854900d7cfe1b6896193d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SP_AC_Tst_Srv_Com_Widget2a - Test Page - Container 1</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sp_container_8d52e2bddbd854900d7cfe1b6896193d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-21 15:43:54</sys_updated_on>
+        <title/>
+        <width>container</width>
+    </sp_container>
+</record_update>

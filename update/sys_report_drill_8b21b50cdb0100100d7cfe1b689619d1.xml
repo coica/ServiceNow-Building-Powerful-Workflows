@@ -104,9 +104,9 @@
         <sys_id>8b21b50cdb0100100d7cfe1b689619d1</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>drill down alain</sys_name>
-        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
-        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
         <sys_update_name>sys_report_drill_8b21b50cdb0100100d7cfe1b689619d1</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2019-11-06 12:15:43</sys_updated_on>

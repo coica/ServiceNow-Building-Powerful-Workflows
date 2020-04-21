@@ -31,7 +31,7 @@
     <sys_translated_text action="DELETE" query="documentkey=766e7e01db1014900d7cfe1b6896195e"/>
     <sys_update_version action="INSERT_OR_UPDATE">
         <action>DELETE</action>
-        <application display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</application>
+        <application display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</application>
         <file_path/>
         <instance_id>2574148cdbcedf487d8cf22ebf9619c6</instance_id>
         <instance_name>dev58650</instance_name>
@@ -64,10 +64,10 @@
         <sys_metadata>766e7e01db1014900d7cfe1b6896195e</sys_metadata>
         <sys_mod_count>0</sys_mod_count>
         <sys_name/>
-        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_parent/>
         <sys_policy/>
-        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
         <sys_scope_delete display_value="">22bd584cf94c499097f5c2db3e921c40</sys_scope_delete>
         <sys_update_name>sp_instance_766e7e01db1014900d7cfe1b6896195e</sys_update_name>
         <sys_update_version display_value="sp_instance_766e7e01db1014900d7cfe1b6896195e">836e7e01db1014900d7cfe1b68961960</sys_update_version>

@@ -63,9 +63,9 @@
             <sys_id>bd78395adb0100100d7cfe1b689619fc</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>x_hotel_room</sys_name>
-            <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+            <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
             <sys_policy/>
-            <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+            <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
             <sys_update_name>sys_ui_list_x_hotel_room_exp_d2578f55adb0100100d7cfe1b68961981</sys_update_name>
             <sys_updated_by>admin</sys_updated_by>
             <sys_updated_on>2019-11-13 12:33:54</sys_updated_on>

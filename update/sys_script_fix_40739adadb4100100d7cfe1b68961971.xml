@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <before>false</before>
+        <description/>
+        <flush_cache>false</flush_cache>
+        <name>SetRoomRefToBlankWhenIsToDelete</name>
+        <record_for_rollback>false</record_for_rollback>
+        <run_once>true</run_once>
+        <script><![CDATA[	var gr = new GlideRecord('x_hotel_check_in');
+	gr.query();   //get all check_in
+	while(gr.next()){ 
+		var referencedRoom = gr.room.getRefRecord();
+		gs.info("ACO - STRYxxxxx - SetRoomRefToBlankWhenIsToDelete : " + referencedRoom.status);
+		if (referencedRoom.status == "todelete"
+		   ){
+			
+			gs.info("ACO - STRYxxxxx - SetRoomRefToBlankWhenIsToDelete set to blanks: " + 
+				referencedRoom.status);
+			    gr.room = "";
+				gr.update();
+			
+		}
+		
+	}]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-11-13 14:32:48</sys_created_on>
+        <sys_id>40739adadb4100100d7cfe1b68961971</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SetRoomRefToBlankWhenIsToDelete</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_fix_40739adadb4100100d7cfe1b68961971</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-11-13 14:32:48</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>

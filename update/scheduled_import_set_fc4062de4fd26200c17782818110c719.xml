@@ -33,9 +33,9 @@
         <sys_id>fc4062de4fd26200c17782818110c719</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>Gardiner Hotels/Groups Import</sys_name>
-        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
-        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
         <sys_update_name>scheduled_import_set_fc4062de4fd26200c17782818110c719</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2016-10-08 17:39:20</sys_updated_on>

@@ -3,5 +3,6 @@
         <element attributes="edge_encryption_enabled=true" label="Floor" max_length="40" name="floor" type="integer"/>
         <element label="Number" max_length="40" name="number" type="string"/>
         <element label="Status" max_length="40" name="status" type="string"/>
+        <element label="u_UI Action List" max_length="4000" name="u_ui_action_list" type="glide_action_list"/>
     </element>
 </database>

@@ -18,9 +18,9 @@
         <sys_id>5f938d78dbd533000d7cfe1b689619fd</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>Maintenance</sys_name>
-        <sys_package display_value="Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
-        <sys_scope display_value="Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
         <sys_update_name>sys_wizard_answer_5f938d78dbd533000d7cfe1b689619fd</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2019-05-06 06:56:38</sys_updated_on>

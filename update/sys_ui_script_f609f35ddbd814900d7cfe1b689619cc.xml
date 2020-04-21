@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_hotel.sp_form</name>
+        <script><![CDATA[var x_hotel = x_hotel || {};
+
+x_hotel.sp_form = (function() {
+	"use strict";
+
+/* set your private variables and functions here. For example: 
+	var privateVar = 0; 
+	function private_function() {
+		return ++privateVar;
+	}
+*/
+
+/* Share variables between multiple UI scripts by adding them to your scope object. For example: 
+	x_hotel.sharedVar = 0; 
+
+ Then access them in your scripts the same way. For example: 
+	function get_shared() {
+		return x_hotel.sharedVar;
+	}
+*/
+	
+	
+/*======== UI SCRIPT FOR JS INCLUDE ========*/
+var sp_form = {
+    /**
+     * Get an array of all the attachments associated with the displayed catalog item.
+     * FOR USE IN SERVICE PORTAL ONLY.
+     * MUST BE ATTACHED TO SERVICE PORTAL THEME, AS A JS INCLUDE.
+     * @returns {_CatalogAttachment}
+     */
+    getAttachments: function() {
+        var i, attachmentElement; //init vars for the loop
+        var catalogAttachments = []; //This will store the CatalogAttachment records, constructed from the loop over each attachment
+        // identified from the angular call
+        var attachmentElements = angular.element("#sc_cat_item").scope().attachments; //Use some JS Include scope magic with a nod to
+        // angular, to get the list of attachments.
+        for (i = 0; i < attachmentElements.length; i++) { //For each attachment document element returned from the angular call
+            attachmentElement = attachmentElements[i]; //Grab a single element for each loop
+            //Push a constructed CatalogAttachment object into the array, with properties corresponding to the relevant attachment
+            // properties.
+            catalogAttachments.push(
+                //Construct a new CatalogAttachment object, for inclusion in the returned array of attachment data.
+                new this._CatalogAttachment(
+                    attachmentElement.file_name,
+                    attachmentElement.ext,
+                    attachmentElement.sys_id,
+                    attachmentElement.size
+                )
+            );
+        }
+        return catalogAttachments;
+    },
+    
+    /**
+     * Constructs a custom CatalogAttachment object
+     * @param file_name {string} The name of the file, INCLUDING the extension. e.g.: 'test_file.csv'.
+     * @param file_extension {string} The file extension, WITHOUT the dot. e.g.: 'xls'.
+     * @param sysID {string} the sys_id of the attachment record (not to be confused with the table_sys_id)
+     * @param file_size {string} the size of the attachment, in KB. e.g.: "13.3 KB".
+     * @constructor
+     */
+    _CatalogAttachment: function(file_name, file_extension, sysID, file_size) {
+        this.file_name = file_name;
+        this.file_extension = file_extension;
+        this.sysID = sysID;
+        this.file_size = file_size;
+    }
+};
+
+getVariables();
+
+/**
+ * This function extends the sp_form object, and adds the 'variables' object, as well as the getElement() and getControl() methods.
+ */
+function getVariables() {
+    var i, varz, vSid, vName, vLabel, catalogItemSid;
+    
+    var itemVariables = {};
+    
+    var hostLocation = window.location.host + '';
+    var sidBegin = window.location.search.indexOf('sys_id=') + 7;
+    var sidEnd = window.location.search.indexOf('&', sidBegin);
+    
+    if (sidEnd >= 0) {
+        catalogItemSid = window.location.search.slice(sidBegin, sidEnd);
+    } else {
+        catalogItemSid = window.location.search.slice(sidBegin);
+    }
+    
+    var requestBody = "";
+    var client = new XMLHttpRequest();
+    //Updated to also get variables from variable sets on the
+    client.open("get", "https://" + hostLocation +
+        "/api/now/table/item_option_new?sysparm_query=sys_idINjavascript%3Anew%20CatItemVariables().getSysIdsForQuery('" +
+        catalogItemSid + "', 'sys_id')" +
+        "%5Eactive%3Dtrue&sysparm_fields=sys_id%2Cname%2Cquestion_text&sysparm_limit=100");
+    client.setRequestHeader('Accept', 'application/json');
+    client.setRequestHeader('Content-Type', 'application/json');
+    client.setRequestHeader('X-UserToken', g_ck);
+    
+    client.onreadystatechange = function() {
+        if (this.readyState == this.DONE) {
+            if (this.status == 200 || this.status == 201) {
+                varz = JSON.parse(this.response).result;
+                
+                for (i = 0; i < varz.length; i++) {
+                    vSid = varz[i].sys_id;
+                    vName = varz[i].name;
+                    vLabel = varz[i].question_text;
+                    
+                    itemVariables[vName] = new CatalogItemVariable(
+                        varz[i].sys_id,
+                        varz[i].name,
+                        varz[i].question_text
+                    );
+                }
+                
+                sp_form.variables = itemVariables;
+                sp_form.getElement = function(varName) {
+                    return document.getElementsByName('IO:' + sp_form.variables[varName].sid)[0];
+                };
+                sp_form.getControl = function(varName) {
+                    return document.getElementById(sp_form.variables[varName].sid);
+                };
+                
+            } else {
+                console.error('Some kind of REST error happened. Error: ' + this.status);
+            }
+        }
+        sp_form.getVariables = function() {
+            return sp_form.variables;
+        }
+    };
+    
+    client.send(requestBody);
+}
+
+/**
+ * @description Constructor function for building CatalogItemVariables
+ * @param variableName {string} The name (not to be confused with the label/question) of the variable.
+ * @param variableSysID {string} The catalog variable record's sys_id.
+ * @param variableQuestion {string} The question/label of the variable itself. May contain spaces.
+ * @constructor
+ */
+function CatalogItemVariable(variableName, variableSysID, variableQuestion) {
+    this.name = variableName;
+    this.sys_id = variableSysID;
+    this.question = variableQuestion;
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	return {
+
+/* set your public API here. For example:
+		incrementAndReturnPrivateVar: function() {
+			return private_function();
+		},
+*/
+		type:  "sp_form"
+	};
+})();
+]]></script>
+        <script_name>sp_form</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-20 08:47:25</sys_created_on>
+        <sys_id>f609f35ddbd814900d7cfe1b689619cc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_hotel.sp_form</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_ui_script_f609f35ddbd814900d7cfe1b689619cc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-20 08:47:25</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>true</use_scoped_format>
+    </sys_ui_script>
+</record_update>

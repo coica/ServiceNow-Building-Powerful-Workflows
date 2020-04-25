@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[// function($scope, $rootScope) {
-//	var c = this;
-//	$scope.change = function(){
-//		var id = $('#user').select2('val');
-//		$rootScope.$broadcast('user', {id: id});
-//	};
-//}
-
-function($scope, $rootScope) {
+        <client_script><![CDATA[function($scope, $rootScope) {
 	var c = this;
 	$scope.change = function(){
 		var id = $('#user').select2('val');
@@ -41,18 +33,18 @@ function($scope, $rootScope) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-04-21 14:55:55</sys_created_on>
         <sys_id>06571a39dbd854900d7cfe1b6896195e</sys_id>
-        <sys_mod_count>15</sys_mod_count>
+        <sys_mod_count>19</sys_mod_count>
         <sys_name>SP_AC_Tst_Srv_Com_Widget2</sys_name>
         <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
         <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
         <sys_update_name>sp_widget_06571a39dbd854900d7cfe1b6896195e</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-04-21 18:07:07</sys_updated_on>
+        <sys_updated_on>2020-04-21 21:18:06</sys_updated_on>
         <template><![CDATA[<div class="panel panel-primary"> 
      <div class="panel-heading">Select User </div> 
 <div class="panel-body">
-<sn-record-picker field="user" table="'sys_user'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ng-change="change()"></sn-record-picker>
+<sn-record-picker id="user" field="user" table="'sys_user'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ng-change="change()"></sn-record-picker>
 </div>
 </div>
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="DELETE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_hotel.DomainInfo</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>DomainInfo</name>
+        <script><![CDATA[var DomainInfo = Class.create();
+
+
+DomainInfo.prototype = {
+
+
+       initialize: function() {
+
+
+       },
+
+
+
+       getCurrentDomain : function() {
+
+
+               var throwAwayRecord = new GlideRecord("sys_user");
+
+
+               throwAwayRecord.newRecord();
+
+
+
+               return throwAwayRecord.getValue("sys_domain");
+
+
+
+       },
+
+       getThisUser : function(ThisUser) {
+
+
+               var user = gs.getUser();
+
+
+               user = getUserByID(ThisUser);
+
+
+
+               return user;
+
+
+
+       },
+
+
+       type: 'DomainInfo'
+
+
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-21 21:55:10</sys_created_on>
+        <sys_id>c427f3f1dbdc54900d7cfe1b689619d8</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>DomainInfo</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_c427f3f1dbdc54900d7cfe1b689619d8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-25 12:33:30</sys_updated_on>
+    </sys_script_include>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</application>
+        <file_path/>
+        <instance_id>2574148cdbcedf487d8cf22ebf9619c6</instance_id>
+        <instance_name>dev58650</instance_name>
+        <name>sys_script_include_c427f3f1dbdc54900d7cfe1b689619d8</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;package_private&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;x_hotel.DomainInfo&lt;/api_name&gt;&lt;caller_access/&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description/&gt;&lt;name&gt;DomainInfo&lt;/name&gt;&lt;script&gt;&lt;![CDATA[var DomainInfo = Class.create();
+
+
+DomainInfo.prototype = {
+
+
+       initialize: function() {
+
+
+       },
+
+
+
+       getCurrentDomain : function() {
+
+
+               var throwAwayRecord = new GlideRecord("sys_user");
+
+
+               throwAwayRecord.newRecord();
+
+
+
+               return throwAwayRecord.getValue("sys_domain");
+
+
+
+       },
+
+       getThisUser : function(ThisUser) {
+
+
+               var user = gs.getUser();
+
+
+               user = getUserByID(ThisUser);
+
+
+
+               return user;
+
+
+
+       },
+
+
+       type: 'DomainInfo'
+
+
+};]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2020-04-21 21:55:10&lt;/sys_created_on&gt;&lt;sys_id&gt;c427f3f1dbdc54900d7cfe1b689619d8&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;DomainInfo&lt;/sys_name&gt;&lt;sys_package display_value="My Hotel" source="x_hotel"&gt;a8f395beebc522004fcde08a5206fe2e&lt;/sys_package&gt;&lt;sys_policy&gt;read&lt;/sys_policy&gt;&lt;sys_scope display_value="My Hotel"&gt;a8f395beebc522004fcde08a5206fe2e&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_c427f3f1dbdc54900d7cfe1b689619d8&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2020-04-25 12:33:30&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1979189007</payload_hash>
+        <record_name>DomainInfo</record_name>
+        <reverted_from/>
+        <source>3df312b1dbd854900d7cfe1b689619ac</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-25 12:33:30</sys_created_on>
+        <sys_id>871d5a47dbd818900d7cfe1b68961955</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>171b15418f60000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-25 12:33:30</sys_updated_on>
+        <type>Script Include</type>
+        <update_guid>8f1d5a47e1d81890a7215408fe316654</update_guid>
+        <update_guid_history>8f1d5a47e1d81890a7215408fe316654:-1979189007,574777f1f6dc54906635a42355ea7f6f:-1036234162</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-25 12:35:18</sys_created_on>
+        <sys_db_object display_value="" name="sys_script_include">sys_script_include</sys_db_object>
+        <sys_id>0220b47d71a34ba481accd0cb46ce184</sys_id>
+        <sys_metadata>c427f3f1dbdc54900d7cfe1b689619d8</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>DomainInfo</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_parent/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_scope_delete display_value="">22bd584cf94c499097f5c2db3e921c40</sys_scope_delete>
+        <sys_update_name>sys_script_include_c427f3f1dbdc54900d7cfe1b689619d8</sys_update_name>
+        <sys_update_version display_value="sys_script_include_c427f3f1dbdc54900d7cfe1b689619d8">871d5a47dbd818900d7cfe1b68961955</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-25 12:35:18</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

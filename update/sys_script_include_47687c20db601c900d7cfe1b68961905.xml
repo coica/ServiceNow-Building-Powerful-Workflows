@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_hotel.AC_CSRemoteFileImport</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description> Usage:
+The Initialize method requires the Scheduled Remote File Import GlideRecord.
+var importFile = new CSRemoteFileImport(current);
+importFile.createEccQueueOutput();</description>
+        <name>AC_CSRemoteFileImport</name>
+        <script><![CDATA[var AC_CSRemoteFileImport = Class.create();
+
+AC_CSRemoteFileImport.prototype = {
+   
+   initialize: function(remoteFileImportGR) {
+	/*
+      //For documentation on how this post method works check the wiki here:
+      //http://wiki.servicenow.com/index.php?title=Importing_Data_Using_Import_Sets
+	  //Created by Marcus Fly (marcus.fly@cloudsherpas.com)
+	  //Created by Valor Poland (valor.poland@cloudsherpas.com
+      */  
+//       this.debug = true; //add a property at later date
+//       if(!remoteFileImportGR) {
+//          this.logMsg("Attempted to get file from MID server but no record was defined", 'debug');
+//          return;
+//       }
+//       this.record = remoteFileImportGR;  //set our record to be the current record passed in
+   },
+   
+   createEccQueueOutput : function(){
+	   
+//      this.logMsg("Creating ECC Queue entry for: " + this.record.getDisplayValue() + " instance URL: " + gs.getProperty('glide.servlet.uri'), 'debug');
+	  
+	   this.logMsg("Creating ECC Queue entry for: ");
+      
+      var jsProbe = this.getJSProbe();
+      jsProbe.create();
+//       this.record.u_last_run_datetime = gs.nowDateTime();
+//       this.record.update();
+   },
+   
+   getJSProbe: function (mid_server_name, file_path) {
+      //var jsProbe = new JavascriptProbe(u_mid_server_name);
+	  var jsProbe = new JavascriptProbe("mid.server.CE_QRM_HUBUD9314_EMEA_DEV");
+      //jsProbe.setSource(this.type);
+      jsProbe.setName(this.type);
+      jsProbe.addParameter("filePath",        file_path);
+	   
+      //jsProbe.addParameter("targetImportSet", this.record.u_import_table.name);
+      //jsProbe.addParameter("instance",        gs.getProperty("glide.servlet.uri"));
+      
+//       if(this.debug) {
+//          jsProbe.setParameter("debug", this.debug);
+//       }
+      
+      jsProbe.setJavascript("var remoteFileImport = new CSMIDServerRemoteFileImport(); \nremoteFileImport.getRemoteFileAndUploadToInstance()");
+      
+      return jsProbe;
+   },
+   
+   logMsg : function(message, msgType) {
+      var msgSrc = "Remote File Importer";
+      if(this.debug && msgType == 'debug') {
+         gs.log('DEBUG: ' + message, msgSrc);
+      }
+      else if(msgType == 'info' || msgType == '') {
+         gs.log('INFO: ' + message, msgSrc);
+      }
+      else {
+         gs.print(message);
+      }
+   },
+   
+   type: "AC_CSRemoteFileImport"
+};
+
+AC_CSRemoteFileImport.filterImportTables = function() {
+	//Ref qual to only show import tables	
+   var t = new TableUtils("sys_import_set_row");
+   var ta = t.getTableExtensions();
+   var jst = j2js(ta);
+   return 'nameIN' + jst + '';
+};
+
+
+
+/* submitted by Anup
+
+var jsProbe = new JavascriptProbe("mid.server.CE_QRM_HUBUD9314_EMEA_DEV");
+    jsProbe.setName("hyundai_data");
+
+    var filePath = "D:\Symlink\hyundai_data.xls";
+    jsProbe.addParameter("filePath", filePath);
+    jsProbe.addParameter("targetImportSet", "x_detc_ceqrm_client_structure_demo");
+
+    var currentInstance = gs.getProperty("glide.servlet.uri");
+	gs.info("glide.servlet.uri" + currentInstance);
+
+    jsProbe.addParameter("instance", currentInstance);
+    var probeResponseTo = "D:\Symlink\hyundai_data.xls";
+
+    jsProbe.setJavascript("var remoteFileImport = new CSMIDServerRemoteFileImport();\nremoteFileImport.getRemoteFileAndUploadToInstance()");
+*/
+
+/* submitted by Alain
+
+//var jsProbe = new JavascriptProbe('CE_QRM_HUBUD9314_EMEA_DEV');
+var jsProbe = new JavascriptProbe('mid.server.CE_QRM_HUBUD9314_EMEA_DEV');
+    jsProbe.setName("hyundai_data");
+
+    var filePath = "D:\Symlink\hyundai_data.xls";
+    jsProbe.addParameter("filePath", filePath);
+    jsProbe.addParameter("targetImportSet", "x_detc_ceqrm_client_structure_demo");
+
+    var currentInstance = gs.getProperty("glide.servlet.uri");
+	gs.info("glide.servlet.uri" + currentInstance);
+
+    jsProbe.addParameter("instance", currentInstance);
+    var probeResponseTo = "D:\Symlink\hyundai_data.xls";
+	jsProbe.setParameter("debug", true);
+
+    jsProbe.setJavascript('var remoteFileImport = new CSMIDServerRemoteFileImport();\nremoteFileImport.getRemoteFileAndUploadToInstance()');
+*/
+
+
+
+
+///////
+
+
+
+/*
+from anup   test Custom versiom
+var CSRemoteFileImportCustom = Class.create();
+
+CSRemoteFileImportCustom.prototype = {
+   
+   initialize: function(vCenterFileName, sourceFolder, imp_set_table) {	  
+	  
+		this.mid_server      = gs.getProperty("QRM.mid_server");
+		this.mid_server_path = gs.getProperty("QRM.mid_server_path");
+		this.source_location = gs.getProperty("QRM.source_location");
+	    this.sourceFolder = sourceFolder;
+		this.file_name       = vCenterFileName;
+	    this.imp_set_table   = imp_set_table; 
+     
+   },
+   
+   createEccQueueOutput : function(){
+	   
+    gs.log("Creating ECC Queue entry for: CSRemoteFileImportCustom =>> "+this.mid_server, 'CSRemoteFileImportCustom');
+      
+      var jsProbe = new JavascriptProbe(this.mid_server);
+      //jsProbe.setSource(this.type);
+	  jsProbe.setJavascript("var remoteFileImport = new CSMIDServerRemoteFileImport(); remoteFileImport.getRemoteFileAndUploadToInstance()");
+      jsProbe.setName("CSRemoteFileImportCustom");
+      jsProbe.addParameter("filePath", this.source_location+"/"+this.sourceFolder+"/"+this.file_name);
+      jsProbe.addParameter("targetImportSet", this.imp_set_table);
+      jsProbe.addParameter("instance",        gs.getProperty("glide.servlet.uri"));  
+      
+      jsProbe.create();
+      
+   },  
+   
+   type: "CSRemoteFileImportCustom"
+};
+
+*/]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-29 21:04:29</sys_created_on>
+        <sys_id>47687c20db601c900d7cfe1b68961905</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AC_CSRemoteFileImport</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_47687c20db601c900d7cfe1b68961905</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-30 15:51:27</sys_updated_on>
+    </sys_script_include>
+</record_update>

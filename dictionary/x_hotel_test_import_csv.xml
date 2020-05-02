@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="sys_import_set_row" label="Test_import_csv" max_length="40" name="x_hotel_test_import_csv" type="collection">
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=adresse" label="adresse" max_length="40" name="u_adresse" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=nom" label="nom" max_length="40" name="u_nom" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Prenom" label="Prenom" max_length="40" name="u_prenom" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=ville" label="ville" max_length="40" name="u_ville" type="string"/>
+    </element>
+</database>

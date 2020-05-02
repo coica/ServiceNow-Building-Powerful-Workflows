@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="DELETE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph/>
+        <id/>
+        <order>2</order>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="1">499c88e3db5858900d7cfe1b68961950</sp_column>
+        <sp_widget display_value="SNH Breadcrumbs">16c88348dbdf3700f9699006db9619a2</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-26 15:19:28</sys_created_on>
+        <sys_id>bbacc8e3db5858900d7cfe1b6896198e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sp_instance_bbacc8e3db5858900d7cfe1b6896198e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-26 15:19:28</sys_updated_on>
+        <title/>
+        <url/>
+        <widget_parameters/>
+    </sp_instance>
+    <sys_translated_text action="DELETE" query="documentkey=bbacc8e3db5858900d7cfe1b6896198e"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</application>
+        <file_path/>
+        <instance_id>2574148cdbcedf487d8cf22ebf9619c6</instance_id>
+        <instance_name>dev58650</instance_name>
+        <name>sp_instance_bbacc8e3db5858900d7cfe1b6896198e</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance"><sp_instance action="INSERT_OR_UPDATE"><active>true</active><class_name/><color>default</color><css/><glyph/><id/><order>2</order><roles/><short_description/><size>md</size><sp_column display_value="1">499c88e3db5858900d7cfe1b68961950</sp_column><sp_widget display_value="SNH Breadcrumbs">16c88348dbdf3700f9699006db9619a2</sp_widget><sys_class_name>sp_instance</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2020-04-26 15:19:28</sys_created_on><sys_id>bbacc8e3db5858900d7cfe1b6896198e</sys_id><sys_mod_count>0</sys_mod_count><sys_name/><sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package><sys_policy/><sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope><sys_update_name>sp_instance_bbacc8e3db5858900d7cfe1b6896198e</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2020-04-26 15:19:28</sys_updated_on><title/><url/><widget_parameters/></sp_instance><sys_translated_text action="delete_multiple" query="documentkey=bbacc8e3db5858900d7cfe1b6896198e"/></record_update>]]></payload>
+        <payload_hash>-1311618717</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>3df312b1dbd854900d7cfe1b689619ac</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-26 15:19:28</sys_created_on>
+        <sys_id>3bacc8e3db5858900d7cfe1b68961990</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>171b712662e0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-26 15:19:28</sys_updated_on>
+        <type>Instance</type>
+        <update_guid>73acc8e3315858903dcfd43e34206f90</update_guid>
+        <update_guid_history>73acc8e3315858903dcfd43e34206f90:-1311618717</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">075e4c27db5858900d7cfe1b68961992</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-04-26 15:26:47</sys_created_on>
+        <sys_db_object display_value="" name="sp_instance">sp_instance</sys_db_object>
+        <sys_id>02c71de06a3a4d18800d0463086f3240</sys_id>
+        <sys_metadata>bbacc8e3db5858900d7cfe1b6896198e</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_scope_delete display_value="">22bd584cf94c499097f5c2db3e921c40</sys_scope_delete>
+        <sys_update_name>sp_instance_bbacc8e3db5858900d7cfe1b6896198e</sys_update_name>
+        <sys_update_version display_value="sp_instance_bbacc8e3db5858900d7cfe1b6896198e">3bacc8e3db5858900d7cfe1b68961990</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-26 15:26:47</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

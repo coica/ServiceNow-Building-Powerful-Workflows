@@ -1,39 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function($scope, $rootScope, spUtil) {
+        <client_script><![CDATA[function($scope, $rootScope, $location, spUtil) {
+	var c = this;
+	c.expanded = !spUtil.isMobile();
+	c.expand = function() {
+		c.expanded = true;
+	};
+	c.breadcrumbs = [];
+	var thisPage = {url: $location.url(), id: $location.search()['id'], label: c.data.page || document.title};
 	
-	
-//	var c = this;
-//	c.expanded = !spUtil.isMobile();
-//	c.expand = function() {
-//		c.expanded = true;
-//	};
-//////
-	
-	// Breadcrumbs
-    var c = [{label: 'SP AC', url: '?id=sp_ac'}, {label: 'SP', url: '?id=sp'}];  // This would be the pagename, myStuff is an example
-
-//  if ($scope.data.tableLabel){
-    c[c.length] = {label: $scope.data.tableLabel, url: '#'};
-
-  c[c.length] = {label: $scope.data.number, url: '#'};
-  $rootScope.$broadcast('sp.update.breadcrumbs', c);
-//}
-//////
-	
-	
-	var deregister = $rootScope.$on("sp.update.breadcrumbs", function(e, list) {
-		c.breadcrumbs = list;
-	});
-
-	$scope.$on('$destroy', function(){
-		deregister();
-	});
-
-}
-
-]]></client_script>
+	if (thisPage.id != $rootScope.portal.homepage_dv) {
+		var pageFound = false;
+		for (var i=0;i<c.data.breadcrumbs.length && !pageFound; i++) {
+			if (c.data.breadcrumbs[i].id == thisPage.id) {
+				c.breadcrumbs.push(thisPage);
+				pageFound = true;
+			} else {
+				c.breadcrumbs.push(c.data.breadcrumbs[i]);
+			}
+		}
+		if (!pageFound) {
+			c.breadcrumbs.push(thisPage);
+		}
+	}
+	c.data.breadcrumbs = c.breadcrumbs;
+	c.server.update();
+}]]></client_script>
         <controller_as>c</controller_as>
         <css>.nav {
   li {
@@ -61,27 +54,59 @@
         <docs/>
         <field_list/>
         <has_preview>false</has_preview>
-        <id>mybreadcrums</id>
+        <id>mysnh_breadcrumbs</id>
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
-        <name>MyBreadcrums</name>
+        <name>MySNH Breadcrumbs</name>
         <option_schema/>
         <public>false</public>
         <roles/>
-        <script><![CDATA[(function() {  /* populate the 'data' object */  /* e.g., data.table = $sp.getValue('table'); */})();]]></script>
+        <script><![CDATA[(function() {
+	if (input) {
+		if (input.breadcrumbs) {
+			gs.getUser().setPreference('snhbc', JSON.stringify(input.breadcrumbs));
+		}
+	} else {
+		data.table = $sp.getParameter('table');
+		data.sys_id = $sp.getParameter('sys_id');
+		if (data.table) {
+			var rec = new GlideRecord(data.table);
+			if (data.sys_id) {
+				rec.get(data.sys_id);
+				data.page = rec.getDisplayValue('number');
+				if (!data.page) {
+					data.page = rec.getDisplayValue('name');
+				}
+				if (!data.page) {
+					data.page = rec.getDisplayValue('short_description');
+				}
+				if (!data.page) {
+					data.page = rec.getLabel();
+				}
+			} else {
+				data.page = rec.getPlural();
+			}
+		}
+		data.breadcrumbs = [];
+		var snhbc = gs.getPreference('snhbc');
+		if (snhbc) {
+			data.breadcrumbs = JSON.parse(snhbc);
+		}
+	}
+})();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2020-04-20 14:33:23</sys_created_on>
-        <sys_id>d698496ddb9c14900d7cfe1b68961972</sys_id>
-        <sys_mod_count>6</sys_mod_count>
-        <sys_name>MyBreadcrums</sys_name>
+        <sys_created_on>2020-04-26 15:21:45</sys_created_on>
+        <sys_id>153d8ce3db5858900d7cfe1b689619ab</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>MySNH Breadcrumbs</sys_name>
         <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
         <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
-        <sys_update_name>sp_widget_d698496ddb9c14900d7cfe1b68961972</sys_update_name>
+        <sys_update_name>sp_widget_153d8ce3db5858900d7cfe1b689619ab</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-04-26 14:48:21</sys_updated_on>
+        <sys_updated_on>2020-04-26 15:24:38</sys_updated_on>
         <template><![CDATA[<div aria-label="${Page breadcrumbs}" role="navigation">
 <ul class="nav nav-pills nav-sm">
   <li>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <before>false</before>
+        <description>REST Msg Outbound - RESTMessageClient : Executing synchronous request&#13;
+REST Msg Outbound - RESTMessageClient : Executing: Outbound REST Message/Method: null/null&#13;
+HTTP Request:&#13;
+                GET https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet&#13;
+                X-Requested-With: XMLHttpRequest&#13;
+                x-csrf-token: Fetch&#13;
+Authentication type: basic&#13;
+Authentication profile:&#13;
+                Profile name: null&#13;
+                Username: SN&#13;
+                Password: ********&#13;
+Mutual Auth: false&#13;
+ECC Queue: true&#13;
+                MID Server: CE_QRM_HUBUD9314_EMEA_DEV&#13;
+                ECC Correlator: null&#13;
+                ECC Params: NONE&#13;
+&#13;
+REST Msg Outbound - ECCRESTRequestDispatcher : Inserting into ECC Queue with details: RESTProbe get https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet ,mid.server.CE_QRM_HUBUD9314_EMEA_DEV&#13;
+REST Msg Outbound - ECCRESTRequestDispatcher : Inserting into ECC Queue with payload: &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;parameters&gt;&lt;parameter name="rest_user" value="SN"/&gt;&lt;parameter name="rest_password" value="SNC_ENC_VAL[1P82wAf0owNYmWc1QXZkk46qIf85SL2alFTrX4mdFNvg]"/&gt;&lt;parameter name="message_headers" value="&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;lt;fields&amp;gt;&amp;lt;field name=&amp;quot;X-Requested-With&amp;quot; value=&amp;quot;XMLHttpRequest&amp;quot;/&amp;gt;&amp;lt;field name=&amp;quot;x-csrf-token&amp;quot; value=&amp;quot;Fetch&amp;quot;/&amp;gt;&amp;lt;/fields&amp;gt;"/&gt;&lt;parameter name="message_parameters" value="&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;lt;fields/&amp;gt;"/&gt;&lt;parameter name="source" value="https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet"/&gt;&lt;parameter name="name" value="get"/&gt;&lt;parameter name="log_level" value="basic"/&gt;&lt;parameter name="http_method" value="GET"/&gt;&lt;parameter name="mid_server" value="CE_QRM_HUBUD9314_EMEA_DEV"/&gt;&lt;parameter name="start_time" value="1588082570986"/&gt;&lt;parameter name="app_scope" value="x_detc_ceqrm"/&gt;&lt;parameter name="source_table" value=""/&gt;&lt;parameter name="source_record" value=""/&gt;&lt;parameter name="transaction_name" value="#86722 /sys.scripts.do"/&gt;&lt;parameter name="session_id" value="162EF18CDB6450103187B062F39619FC"/&gt;&lt;parameter name="user" value="alain.coic"/&gt;&lt;/parameters&gt;&#13;
+REST Msg Outbound - RESTMessageClient : Response: com.glide.rest.outbound.ecc.ECCRESTResponse@1d40797ECC Output:&#13;
+                Output Queue SysId: 855e4a84db6c50103187b062f39619cd&#13;
+                Timeout (seconds): 30&#13;
+&#13;
+x_detc_ceqrm: CREATE SNAP GET Headers :set-cookie: sap-usercontext=sap-client=300; path=/,set-cookie: SAP_SESSIONID_CRQ_300=6cdS5qKlvLNWX6xezNrjIvIzhzqJWBHqgl0AUFaxWBI%3d; path=/; secure; HttpOnly,content-type: application/xml,content-length: 915,x-csrf-token: 5bBvMbMBTTgWtbXdI8e9Yw==,dataserviceversion: 1.0&#13;
+x_detc_ceqrm: Name found: set-cookie value:  sap-usercontext=sap-client=300; path=/&#13;
+x_detc_ceqrm: Name found: set-cookie value:  SAP_SESSIONID_CRQ_300=6cdS5qKlvLNWX6xezNrjIvIzhzqJWBHqgl0AUFaxWBI%3d; path=/; secure; HttpOnly&#13;
+x_detc_ceqrm: SessIon Id found: SAP_SESSIONID_CRQ_300=6cdS5qKlvLNWX6xezNrjIvIzhzqJWBHqgl0AUFaxWBI%3d; path=/; secure; HttpOnly&#13;
+x_detc_ceqrm: CREATE SNAP GET inToken :5bBvMbMBTTgWtbXdI8e9Yw==&#13;
+x_detc_ceqrm: CREATE SNAP GET inCookie :SAP_SESSIONID_CRQ_300=6cdS5qKlvLNWX6xezNrjIvIzhzqJWBHqgl0AUFaxWBI%3d; path=/; secure; HttpOnly&#13;
+REST Msg Outbound - RESTMessageClient : Executing synchronous request&#13;
+REST Msg Outbound - RESTMessageClient : Executing: Outbound REST Message/Method: null/null&#13;
+HTTP Request:&#13;
+                POST https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet&#13;
+                Cookie: SAP_SESSIONID_CRQ_300=6cdS5qKlvLNWX6xezNrjIvIzhzqJWBHqgl0AUFaxWBI%3d; path=/; secure; HttpOnly&#13;
+                X-CSRF-Token: 5bBvMbMBTTgWtbXdI8e9Yw==&#13;
+                X-Requested-With: XMLHttpRequest&#13;
+                Content-Type: application/json&#13;
+Authentication type: basic&#13;
+Authentication profile:&#13;
+                Profile name: null&#13;
+                Username: SN&#13;
+                Password: ********&#13;
+Mutual Auth: false&#13;
+ECC Queue: true&#13;
+                MID Server: CE_QRM_HUBUD9314_EMEA_DEV&#13;
+                ECC Correlator: null&#13;
+                ECC Params: NONE&#13;
+Request Content:&#13;
+                Length: 88&#13;
+                Content: {"SNAP_ID":"11","OPPT_ID":"336","OPPT_ITEM_GUID":"005056B1-3670-1ED8-86DA-9461F8BC01C7"}&#13;
+&#13;
+REST Msg Outbound - ECCRESTRequestDispatcher : Inserting into ECC Queue with details: RESTProbe post https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet ,mid.server.CE_QRM_HUBUD9314_EMEA_DEV&#13;
+REST Msg Outbound - ECCRESTRequestDispatcher : Inserting into ECC Queue with payload: &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;parameters&gt;&lt;parameter name="rest_user" value="SN"/&gt;&lt;parameter name="rest_password" value="SNC_ENC_VAL[4hEB9MqXhjvUmb17g8vfQT3ET9ufodZOjhCS4KjWGxhE]"/&gt;&lt;parameter name="message_headers" value="&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;lt;fields&amp;gt;&amp;lt;field name=&amp;quot;Cookie&amp;quot; value=&amp;quot;SAP_SESSIONID_CRQ_300=6cdS5qKlvLNWX6xezNrjIvIzhzqJWBHqgl0AUFaxWBI%3d; path=/; secure; HttpOnly&amp;quot;/&amp;gt;&amp;lt;field name=&amp;quot;X-CSRF-Token&amp;quot; value=&amp;quot;5bBvMbMBTTgWtbXdI8e9Yw==&amp;quot;/&amp;gt;&amp;lt;field name=&amp;quot;X-Requested-With&amp;quot; value=&amp;quot;XMLHttpRequest&amp;quot;/&amp;gt;&amp;lt;field name=&amp;quot;Content-Type&amp;quot; value=&amp;quot;application/json&amp;quot;/&amp;gt;&amp;lt;/fields&amp;gt;"/&gt;&lt;parameter name="message_parameters" value="&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;lt;fields/&amp;gt;"/&gt;&lt;parameter name="source" value="https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet"/&gt;&lt;parameter name="name" value="post"/&gt;&lt;parameter name="content" value="{&amp;quot;SNAP_ID&amp;quot;:&amp;quot;11&amp;quot;,&amp;quot;OPPT_ID&amp;quot;:&amp;quot;336&amp;quot;,&amp;quot;OPPT_ITEM_GUID&amp;quot;:&amp;quot;005056B1-3670-1ED8-86DA-9461F8BC01C7&amp;quot;}"/&gt;&lt;parameter name="log_level" value="basic"/&gt;&lt;parameter name="http_method" value="POST"/&gt;&lt;parameter name="mid_server" value="CE_QRM_HUBUD9314_EMEA_DEV"/&gt;&lt;parameter name="start_time" value="1588082573069"/&gt;&lt;parameter name="app_scope" value="x_detc_ceqrm"/&gt;&lt;parameter name="source_table" value=""/&gt;&lt;parameter name="source_record" value=""/&gt;&lt;parameter name="transaction_name" value="#86722 /sys.scripts.do"/&gt;&lt;parameter name="session_id" value="162EF18CDB6450103187B062F39619FC"/&gt;&lt;parameter name="user" value="alain.coic"/&gt;&lt;/parameters&gt;&#13;
+REST Msg Outbound - RESTMessageClient : Response: com.glide.rest.outbound.ecc.ECCRESTResponse@29727dECC Output:&#13;
+                Output Queue SysId: 6d5e4a84db6c50103187b062f39619cf&#13;
+                Timeout (seconds): 30&#13;
+&#13;
+x_detc_ceqrm: POST SNAP : 1&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"&gt;&lt;code&gt;SY/530&lt;/code&gt;&lt;message xml:lang="en"&gt;Invalid Status value&lt;/message&gt;&lt;innererror&gt;&lt;transactionid&gt;F55889EA352EF144825D005056B15812&lt;/transactionid&gt;&lt;timestamp&gt;20200428140256.4970000&lt;/timestamp&gt;&lt;Error_Resolution&gt;&lt;SAP_Transaction&gt;Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details&lt;/SAP_Transaction&gt;&lt;SAP_Note&gt;See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)&lt;/SAP_Note&gt;&lt;/Error_Resolution&gt;&lt;errordetails&gt;&lt;errordetail&gt;&lt;code&gt;ZSN/012&lt;/code&gt;&lt;message&gt;Invalid Status value&lt;/message&gt;&lt;propertyref/&gt;&lt;severity&gt;error&lt;/severity&gt;&lt;/errordetail&gt;&lt;errordetail&gt;&lt;code&gt;/IWBEP/CX_MGW_BUSI_EXCEPTION&lt;/code&gt;&lt;message&gt;An exception was raised.&lt;/message&gt;&lt;propertyref/&gt;&lt;severity&gt;error&lt;/severity&gt;&lt;/errordetail&gt;&lt;/errordetails&gt;&lt;/innererror&gt;&lt;/error&gt;&#13;
+x_detc_ceqrm: Create1 SNAP Rest Call 2 :5bBvMbMBTTgWtbXdI8e9Yw==</description>
+        <flush_cache>false</flush_cache>
+        <name>Deloitte_SAP_CSRF_Cookies_REST</name>
+        <record_for_rollback>false</record_for_rollback>
+        <run_once>true</run_once>
+        <script><![CDATA[//Get csrf token from SAP.
+ 
+var r = new sn_ws.RESTMessageV2();
+r.setEndpoint('https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet');
+r.setBasicAuth('SN','Deloitte1');
+r.setMIDServer('CE_QRM_HUBUD9314_EMEA_DEV');
+r.setHttpMethod("get");
+r.setRequestHeader("x-csrf-token","Fetch");
+r.setRequestHeader("X-Requested-With","XMLHttpRequest");
+var response = r.execute();
+ 
+// gs.info('CREATE SNAP :'+inToken);
+var headers = response.getAllHeaders();
+gs.info('CREATE SNAP GET Headers :'+headers);
+var sessionId;
+for(var i in headers)
+{ var name = headers[i].name.toString();
+var value = headers[i].value.toString();
+gs.info("Name found: " + name + " value: " +value  );
+if(name=="set-cookie" && value.substr(0, 13)=="SAP_SESSIONID")
+{ sessionId = value;
+gs.info("SessIon Id found: " +sessionId);
+break; }}
+inToken = response.getHeader('x-csrf-token');
+gs.info('CREATE SNAP GET inToken :'+inToken);
+inCookie = sessionId;
+gs.info('CREATE SNAP GET inCookie :'+inCookie);
+//
+// POST Call to create a SNAP record :
+//
+var request = new sn_ws.RESTMessageV2();
+request.setEndpoint('https://hubud581.atrema.deloitte.com:8300/sap/opu/odata/sap/ZSN_SRV/ZSNAPSet');
+request.setHttpMethod("Post");
+request.setBasicAuth('SN','Deloitte1');
+request.setMIDServer('CE_QRM_HUBUD9314_EMEA_DEV');
+request.setRequestHeader("Content-Type","application/json");
+request.setRequestHeader("X-Requested-With","XMLHttpRequest");
+request.setRequestHeader("X-CSRF-Token", inToken);
+var requestBody ={};
+requestBody.SNAP_ID ='11';
+requestBody.OPPT_ID ='336';
+requestBody.OPPT_ITEM_GUID ='005056B1-3670-1ED8-86DA-9461F8BC01C7';
+request.setRequestBody(JSON.stringify(requestBody));
+request.setRequestHeader('Cookie', sessionId);
+request.setRequestHeader("X-CSRF-Token",inToken);
+var response1 = request.execute();
+gs.info("POST SNAP : 1"+response1.getBody());
+gs.info("Create1 SNAP Rest Call 2 :"+inToken,"ALAIN");]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-05-02 09:20:44</sys_created_on>
+        <sys_id>05233151db209c900d7cfe1b6896198c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Deloitte_SAP_CSRF_Cookies_REST</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_fix_05233151db209c900d7cfe1b6896198c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-05-02 09:21:35</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>

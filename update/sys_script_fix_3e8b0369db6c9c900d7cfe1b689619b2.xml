@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <before>false</before>
+        <description>AC_CSMIDServerRemoteFileImport&#13;
+imports a file csv or xlsx "/servicenow/test_import_csv1.xlsx");&#13;
+to target targetImportSet = "Test_import_csv.csv Global";</description>
+        <flush_cache>false</flush_cache>
+        <name>AC_CSMIDServerRemoteFileImport</name>
+        <record_for_rollback>false</record_for_rollback>
+        <run_once>true</run_once>
+        <script><![CDATA[var jsProbe = new JavascriptProbe("ACMIDDEV1");
+
+var midFileNameToImport = "CSRemoteFileImport";
+jsProbe.setName(midFileNameToImport);
+
+jsProbe.addParameter("filePath", "/servicenow/test_import_csv1.xlsx");
+
+//var targetImportSet = "u_test_import_csv_csv_global";
+
+var targetImportSet = "Test_import_csv.csv Global";
+
+jsProbe.addParameter("targetImportSet", targetImportSet);
+
+
+var currentInstance = gs.getProperty("glide.servlet.uri");
+jsProbe.addParameter("instance", currentInstance);
+
+//jsProbe.addParameter("instance",        gs.getProperty("glide.servlet.uri"));
+
+//gs.info("AC Get Attach from MID : instance :  " +currentInstance );
+
+jsProbe.setJavascript("var remoteFileImport = new CSMIDServerRemoteFileImport();\nremoteFileImport.getRemoteFileAndUploadToInstance()");
+jsProbe.create();]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-05-03 10:23:04</sys_created_on>
+        <sys_id>3e8b0369db6c9c900d7cfe1b689619b2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AC_CSMIDServerRemoteFileImport</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_fix_3e8b0369db6c9c900d7cfe1b689619b2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-05-03 10:23:04</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>

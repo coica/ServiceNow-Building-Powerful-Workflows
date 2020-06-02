@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function ($scope, $http, spUtil, nowAttachmentHandler, $rootScope, $sanitize, $window, $sce) {
+  var c = this;
+  c.quantity = 1;
+  //$scope.data.sc_cat_item.description = $sce.trustAsHtml($scope.data.sc_cat_item.description);
+  $scope.m = $scope.data.msgs;
+  $scope.submitButtonMsg = $scope.m.submitMsg;
+  var ah = $scope.attachmentHandler = new nowAttachmentHandler(setAttachments, function() {});
+  ah.setParams('sp_portal', $scope.data._attachmentGUID, 1024 * 1024 * 24);
+  function setAttachments(attachments, action) {
+  $scope.attachments = attachments;
+  }
+  $scope.attachmentHandler.getAttachmentList();
+  $scope.confirmDeleteAttachment = function(attachment, $event) {
+      $rootScope.$broadcast("dialog.delete_attachment.show", {
+          parms: {
+              ok: function() {
+                  $scope.attachmentHandler.deleteAttachment(attachment);
+                  $rootScope.$broadcast("dialog.delete_attachment.close");
+              },
+              cancel: function() {
+                  $rootScope.$broadcast("dialog.delete_attachment.close");
+              },
+              details: attachment.name
+          }
+      })
+  }
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>my_ac_attachment</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>My_ac_attachment</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+    var m = data.msgs = {};
+    m.submitMsg = gs.getMessage("Submit");
+    m.submittedMsg = gs.getMessage("Submitted");
+    m.createdMsg = gs.getMessage("Created");
+    m.trackMsg = gs.getMessage("track using 'Requests' in the header or");
+    m.clickMsg = gs.getMessage("click here to view");
+    m.dialogTitle = gs.getMessage("Delete Attachment");
+    m.dialogMessage = gs.getMessage("Are you sure?");
+    m.dialogOK = gs.getMessage("OK");
+    m.dialogCancel = gs.getMessage("Cancel");
+
+    if (input)
+        data.sys_id = input.sys_id;
+    else
+        data.sys_id = $sp.getParameter("sys_id") || $sp.getParameter('sl_sys_id');
+    data._attachmentGUID = gs.generateGUID();
+    // portal can specify a catalog home page
+    data.sc_catalog_page = $sp.getDisplayValue("sc_catalog_page") || "sc_home";
+    var validatedItem = new GlideappCatalogItem.get(data.sys_id);
+    if (!validatedItem.canView())
+        return;
+})()]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-05-05 15:36:38</sys_created_on>
+        <sys_id>cbe6e6dedb2810d00d7cfe1b6896194e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>My_ac_attachment</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sp_widget_cbe6e6dedb2810d00d7cfe1b6896194e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-05-05 15:36:38</sys_updated_on>
+        <template><![CDATA[<now-attachments-list template="sp_attachment_single_line" ></now-attachments-list>
+<label style="float:left;font-weight:normal;cursor:pointer;">
+  <sp-attachment-button></sp-attachment-button>
+  <!--<span style="padding-left:4px;">${please fill them in excel and attach it to this request.}<br>Click <a>here</a> to add an attachment</span>-->
+</label>
+<sp-message-dialog name="delete_attachment"
+                   title=""
+                   message=""
+                   ok=""
+                   cancel=""
+                   dialog-class="delete-dialog"/>]]></template>
+    </sp_widget>
+</record_update>

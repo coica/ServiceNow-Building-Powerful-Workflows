@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_widget_dependency">
+    <m2m_sp_widget_dependency action="INSERT_OR_UPDATE">
+        <sp_dependency display_value="chart.js">a7a8754347011200ba13a5554ee4905c</sp_dependency>
+        <sp_widget display_value="TensorFlowPart1">7eaabae1dbb418d00d7cfe1b68961996</sp_widget>
+        <sys_class_name>m2m_sp_widget_dependency</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-05-15 19:32:46</sys_created_on>
+        <sys_id>efdcbe25dbb418d00d7cfe1b6896191e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>chart.js.TensorFlowPart1</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>m2m_sp_widget_dependency_efdcbe25dbb418d00d7cfe1b6896191e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-05-15 19:32:46</sys_updated_on>
+    </m2m_sp_widget_dependency>
+</record_update>

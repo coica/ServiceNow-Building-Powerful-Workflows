@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_hotel.SingletonScriptInclude</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>SingletonScriptInclude</description>
+        <name>SingletonScriptInclude</name>
+        <script><![CDATA[var SingletonScriptInclude = (function () {
+	
+	/*
+    ** Instance Variables
+    */
+	
+	/*	
+		gs.addInfoMessage(SingletonScriptInclude.getValue('number'));
+		=> Security restricted: Read operation on table 'task' from scope 'My Hotel' was granted and added to 'My Hotel' cross scope privileges
+Background message, type:info, message: TOLTASK0001001
+		
+		gs.addInfoMessage(SingletonScriptInclude.getValue('short_description'));
+		
+		=> Background message, type:info, message: Ready for fulfillment
+		
+		gs.addInfoMessage(SingletonScriptInclude.getValue('number'));
+		
+		=> Background message, type:info, message: TOLTASK0001001		
+    */	
+	
+    var grSingleInstance;
+       
+    return {
+        
+        /*
+        ** Public functions
+        */
+        
+        getValue: function (label) {
+            var fieldValue = '';
+       
+            if (gs.nil(grSingleInstance)) {
+                grSingleInstance = getGR();
+            }
+
+            if (!gs.nil(grSingleInstance) && grSingleInstance.isValid() ) {
+                fieldValue = grSingleInstance.getValue(label);
+                if (gs.nil(fieldValue)) {
+                    fieldValue = '';
+                } 
+            }
+
+            return fieldValue;
+        }
+    };
+    
+    /*
+    ** Private functions
+    */
+    
+    function getGR() {
+        var gr = new GlideRecord('task');  
+        gr.addQuery('active',true);
+        gr.setLimit(1);
+        gr.query(); 
+		if (!gr.next()) {
+            throw("Could not find GR");
+        }
+        return gr;
+    }
+
+})();]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-06-02 08:04:31</sys_created_on>
+        <sys_id>13bb0557db89d0100d7cfe1b689619f5</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>SingletonScriptInclude</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_13bb0557db89d0100d7cfe1b689619f5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-06-02 08:11:42</sys_updated_on>
+    </sys_script_include>
+</record_update>

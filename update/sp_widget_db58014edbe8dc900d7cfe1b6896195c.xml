@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope) {
+	/* widget controller */
+	var c = this;
+	$scope.show = 'true';
+	
+	//Icon status
+	$scope.masterstate = c.data.masterstate;
+	$scope.clientstate = c.data.clientstate;
+	$scope.businessstate = c.data.businessstate;
+	$scope.engagementstate = c.data.engagementstate;
+	
+	//
+	$scope.mastercount = c.data.mastercount;
+	$scope.clientcount  = c.data.clientcount;
+	$scope.businesscount  = c.data.businesscount;
+	$scope.engagementcount = c.data.engagementcount;
+
+	//table Sys_id
+	$scope.number = c.data.number;
+	$scope.masterTaskData = c.data.masterTaskData;
+	$scope.clientTaskData = c.data.clientTaskData;
+	$scope.businessTaskData = c.data.businessTaskData;
+	$scope.engagementTaskData = c.data.engagementTaskData;
+	
+	//Accordian 1 Arrows
+		$('#collapse1').on('hide.bs.collapse', function () {
+			$("#s1").html('<img src="Arrow_Up.svg" class="hide"/>');
+			$("#s2").html('<img src="Arrow_Down.svg" class="show"/>');
+})
+		$('#collapse1').on('show.bs.collapse', function () {
+		  $("#s1").html('<img src="Arrow_Up.svg" class="show"/>');
+			$("#s2").html('<img src="Arrow_Down.svg" class="hide"/>');
+})
+	
+	//Accordian 2 Arrows
+		$('#collapse2').on('hide.bs.collapse', function () {
+			$("#s3").html('<img src="Arrow_Up.svg" class="hide"/>');
+			$("#s4").html('<img src="Arrow_Down.svg" class="show"/>');
+})
+		$('#collapse2').on('show.bs.collapse', function () {
+		  $("#s3").html('<img src="Arrow_Up.svg" class="show"/>');
+			$("#s4").html('<img src="Arrow_Down.svg" class="hide"/>');
+})
+	
+	//Accordian 3 Arrows
+		$('#collapse3').on('hide.bs.collapse', function () {
+			$("#s5").html('<img src="Arrow_Up.svg" class="hide"/>');
+			$("#s6").html('<img src="Arrow_Down.svg" class="show"/>');
+})
+		$('#collapse3').on('show.bs.collapse', function () {
+			$("#s5").html('<img src="Arrow_Up.svg" class="show"/>');
+			$("#s6").html('<img src="Arrow_Down.svg" class="hide"/>');
+})
+	
+	//Accordian 4 Arrows
+		$('#collapse4').on('hide.bs.collapse', function () {
+			$("#s7").html('<img src="Arrow_Up.svg" class="hide"/>');
+			$("#s8").html('<img src="Arrow_Down.svg" class="show"/>');
+})
+		$('#collapse4').on('show.bs.collapse', function () {			
+		  $("#s7").html('<img src="Arrow_Up.svg" class="show"/>');
+			$("#s8").html('<img src="Arrow_Down.svg" class="hide"/>');
+})
+	
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.mt-2 {
+  margin-top: 2rem;
+}
+
+.col-sm-12 {
+  padding-left: 0px;
+  padding-right: 30px;
+}
+  
+.panel {
+  border : 0;
+}
+
+.panel-heading {
+  background : #fff !important;
+  border: 1px solid #97999B;
+  margin-top: 16px;
+}
+
+.panel-body {
+  background : #fff !important;
+  border: 1px solid #97999B;
+}
+
+.panel-title {
+  width : 97%;
+  float: left;
+}
+
+.title {
+  font-size: 24px;
+}
+
+.eclipse_style {
+  width : 8px
+}
+
+
+.img_class {
+  margin-right : 5px;
+  width : 15px;
+}
+
+.converStyle {
+  //border : 1px solid #eeeeee;
+  //background : #eee !important;
+	border: #BDBDBD;
+}
+
+/*.panel-heading .arrow{
+background-image: url("Arrow_Up.svg");
+  background-repeat: no-repeat
+}*/
+.hide{
+  display:none;
+}
+.show{
+  display: block;
+}
+
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>dltqrm_accordion</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>DLTQRM Accordion</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	/* populate the 'data' object */
+	/* e.g., data.table = $sp.getValue('table'); */
+
+	//Get sys_id of EA table record
+	var engSysId = $sp.getParameter("sys_id");
+	
+	//Master data fetch
+	var mastergr = new GlideRecord("x_detc_ceqrm_master_data_ritm");
+	mastergr.addQuery('active', true);
+	mastergr.addQuery('engagement_request', engSysId);
+	mastergr.query();
+	//data.widgetConversation1 = false;
+	if(mastergr.next()) { 
+		data.masterstate = mastergr.state.getDisplayValue();
+		//data.masterstate = mastergr.state.getDisplayValue();
+		data.masterDataNumber =  mastergr.number.getDisplayValue();
+		data.mastersys_id =  mastergr.sys_id.getDisplayValue();
+		data.masterconversationOptions1 = {"table": "x_detc_ceqrm_master_data_ritm","sys_id": data.mastersys_id};
+		//console.log("SAI : debug widget : xxx : valuer of. : " + data.mastersys_id );
+		//data.widgetConversation1 = true;
+	}
+	
+	var mastertask = new GlideRecord("x_detc_ceqrm_qrm_task");
+	mastertask.addQuery('active', true);
+	//parent=a3f49403db1308d09a17ae3bd3961968
+	mastertask.addQuery('parent', data.mastersys_id);
+	mastertask.query();
+	data.masterTaskData = [];
+
+	while(mastertask.next()) { 
+		var masterTask = {};	
+		data.mastercount = mastertask.getRowCount();
+		masterTask.number = mastertask.task_type.getDisplayValue();
+		masterTask.status =  mastertask.state.getDisplayValue();
+		data.masterTaskData.push(masterTask);
+	}
+
+	//Client Acceptance fetch
+	var clientgr = new GlideRecord("x_detc_ceqrm_client_acceptance_ritm");
+	clientgr.addQuery('active', true);
+	clientgr.addQuery('engagement_request', engSysId);
+	clientgr.query();
+	//data.widgetConversation2 = false;
+	if(clientgr.next()) { 
+		data.clientstate = clientgr.state.getDisplayValue();
+		//data.masterstate = clientgr.state.getDisplayValue();
+		data.masterDataNumber =  clientgr.number.getDisplayValue();
+		data.clientsys_id =  clientgr.sys_id.getDisplayValue();
+	  data.clientconversationOptions2 = {"table": "x_detc_ceqrm_client_acceptance_ritm","sys_id": data.clientsys_id};
+		//console.log("SAI : debug widget : xxx : valuer of. : " + data.clientsys_id );
+		//data.widgetConversation2 = true;
+	}
+	
+	var clienttask = new GlideRecord("x_detc_ceqrm_qrm_task");
+	clienttask.addQuery('active', true);
+	//parent=a3f49403db1308d09a17ae3bd3961968
+	clienttask.addQuery('parent', data.clientsys_id);
+	clienttask.query();
+	data.clientTaskData = [];
+
+	while(clienttask.next()) { 
+		var clienttaskData = {};	
+		data.clientcount = clienttask.getRowCount();
+		clienttaskData.number = clienttask.task_type.getDisplayValue();
+		clienttaskData.status =  clienttask.state.getDisplayValue();
+		data.clientTaskData.push(clienttaskData);
+	}
+
+  //Business Relationship fetch
+	var businessgr = new GlideRecord("x_detc_ceqrm_business_relationship_ritm");
+	businessgr.addQuery('active', true);
+	businessgr.addQuery('engagement_request',engSysId);
+	businessgr.query();
+	//data.widgetConversation3 = false;
+	if(businessgr.next()) { 
+		data.businessstate = businessgr.state.getDisplayValue();
+		//data.masterstate = businessgr.state.getDisplayValue();
+		data.masterDataNumber =  businessgr.number.getDisplayValue();
+		data.businesssys_id =  businessgr.sys_id.getDisplayValue();
+		data.businessconverOptions3 = {"table": "x_detc_ceqrm_business_relationship_ritm","sys_id": data.businesssys_id};
+		//console.log("SAI : debug widget : xxx : valuer of. : " + data.businesssys_id );
+		//data.widgetConversation3 = true;
+	}
+	
+	var businesstask = new GlideRecord("x_detc_ceqrm_qrm_task");
+	businesstask.addQuery('active', true);
+	//parent=a3f49403db1308d09a17ae3bd3961968
+	businesstask.addQuery('parent', data.businesssys_id);
+	businesstask.query();
+	data.businessTaskData = [];
+
+	while(businesstask.next()) { 
+		var businesstaskData = {};	
+		data.businesscount = businesstask.getRowCount();
+		businesstaskData.number = businesstask.task_type.getDisplayValue();
+		businesstaskData.status =  businesstask.state.getDisplayValue();
+		data.businessTaskData.push(businesstaskData);
+	}
+
+  //Engagement Acceptance fetch
+	var engagementgr = new GlideRecord("x_detc_ceqrm_engagement_acceptance_ritm");
+	engagementgr.addQuery('active', true);
+	engagementgr.addQuery('engagement_request', engSysId);
+	engagementgr.query();
+	if(engagementgr.next()) { 
+		data.engagementstate = engagementgr.state.getDisplayValue();
+		//data.masterstate = engagementgr.state.getDisplayValue();
+		data.masterDataNumber =  engagementgr.number.getDisplayValue();
+		data.engagementsys_id =  engagementgr.sys_id.getDisplayValue();
+		//gs.addInfoMessage("test 123"+data.engagementsys_id);
+		//gs.addInfoMessage("test 3"+data.engagementgr);
+		data.engagementconverOptions4 = {"table": "x_detc_ceqrm_engagement_acceptance_ritm","sys_id": data.engagementsys_id};
+	}
+	
+	var engagementtask = new GlideRecord("x_detc_ceqrm_qrm_task");
+	engagementtask.addQuery('active', true);
+	//parent=a3f49403db1308d09a17ae3bd3961968
+	engagementtask.addQuery('parent', data.engagementsys_id);
+	engagementtask.query();
+	data.engagementTaskData = [];
+
+	while(engagementtask.next()) { 
+		var engagementtaskData = {};	
+		//data.engementcount = engagementtask.getRowCount();
+		data.engagementcount = engagementtask.getRowCount();
+		engagementtaskData.number = engagementtask.task_type.getDisplayValue();
+		engagementtaskData.status =  engagementtask.state.getDisplayValue();
+		data.engagementTaskData.push(engagementtaskData);
+	}
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-05-04 14:05:01</sys_created_on>
+        <sys_id>db58014edbe8dc900d7cfe1b6896195c</sys_id>
+        <sys_mod_count>17</sys_mod_count>
+        <sys_name>DLTQRM Accordion</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sp_widget_db58014edbe8dc900d7cfe1b6896195c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-05-04 15:16:44</sys_updated_on>
+        <template><![CDATA[<div class="container">
+  <!-- <div class="col-sm-1">  </div> -->
+  <div class="col-sm-12 mt-2">
+    <h4>
+      <b class="title">Tasks and actions within your request</b> 
+    </h4>
+    
+    <div class="panel-group" id="accordion">
+      <!-- Accordian 1 Master data -->
+      <div class="panel panel-default" >
+        <div class="panel-heading"  data-toggle="collapse" data-parent="#accordion" href="#collapse1"  >
+          <h5 class="panel-title" >
+            <a>
+              <b>Master Data</b>
+              <img src="progress.svg" class="img_class" ng-if="masterstate == 'Open'"/>
+              <img src="Inprogress.svg" class="img_class" ng-if="masterstate == 'Work in Progress'"/>
+              <img src="notStarted.svg" class="img_class" ng-if="masterstate == 'Awaiting User Info'"/> 
+              <img src="Status_close.svg" class="img_class" ng-if="masterstate == 'Closed Complete'"/> 
+              <!--
+							<img src="" class="img_class" ng-if="masterstate == 'Abandoned'"/>
+              <img src="" class="img_class" ng-if="masterstate == 'Rejected'"/>
+              <img src="" class="img_class" ng-if="masterstate == ''"/>
+							-->
+            </a>
+          </h5>
+          
+            <span id="s1">
+            	<img src="Arrow_Up.svg" class="show"/>
+          	</span>
+            <span id="s2">
+              <img src="Arrow_Down.svg" class="hide"/>
+            </span>
+          <!--<span class="arrow"></span>
+          <span>Actions({{clientcount}})</span> -->
+					
+        </div>
+        <!-- Collapsed content  -->
+        <div id="collapse1" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <!-- Task details & Status  -->
+            <div class="col-md-6">
+              <p ng-repeat = "task in masterTaskData">
+                <b>{{task.number}} </b>
+                	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <img src="eclipsebluenew.svg" class="eclipse_style" ng-if="task.status == 'Open'"/>
+                  <img src="eclipseyellow.svg" class="eclipse_style" ng-if="task.status == 'Work in Progress'"/>
+                  <img src="" class="img_class" ng-if="task.status == 'Awaiting User Info'"/>
+                  <img src="eclipsegreen.svg" class="eclipse_style" ng-if="task.status == 'Closed Complete'"/>
+                <!--
+                  <img src="" class="eclipse_style" ng-if="task.status == 'Abandoned'"/>
+                  <img src="" class="eclipse_style" ng-if="task.status == 'Rejected'"/>
+                  <img src="" class="eclipse_style" ng-if="task.status == ''"/>
+                -->
+             	 <b>{{task.status}}</b>
+              </p>
+            </div>
+            <!-- Contact analyst chat window  -->
+            <div class="col-md-6">
+            	<widget id="qrm_ticket_scoped_master" options='data.masterconversationOptions1'></widget>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Accordian 2 Client Acceptance -->
+      <div class="panel panel-default">
+        <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+          <h5 class="panel-title">
+            <a>
+              <b>Client Acceptance</b>
+              <img src="progress.svg" class="img_class" ng-if="clientstate == 'Open'"/>
+              <img src="Inprogress.svg" class="img_class" ng-if="clientstate == 'Work in Progress'"/>
+              <img src="notStarted.svg" class="img_class" ng-if="clientstate == 'Awaiting User Info'"/> 
+              <img src="Status_close.svg" class="img_class" ng-if="clientstate == 'Closed Complete'"/>
+              <!--
+              <img src="" class="img_class" ng-if="clientstate == 'Abandoned'"/>
+              <img src="" class="img_class" ng-if="clientstate == 'Rejected'"/>
+              <img src="" class="img_class" ng-if="clientstate == ''"/>
+              -->
+            </a>
+          </h5>
+         		<span id="s3">
+            	<img src="Arrow_Up.svg" class="hide"/>
+          	</span>
+            <span id="s4">
+              <img src="Arrow_Down.svg" class="show"/>
+            </span>
+          <!--
+          <span>Actions({{clientcount}})</span>
+					-->
+        </div>
+        <!-- Collapsed content  -->
+        <div id="collapse2" class="panel-collapse collapse">
+          <div class="panel-body">
+            <!-- Task details & Status  -->
+            <div class="col-md-6">
+              <p ng-repeat = "task in clientTaskData">
+               <b>{{task.number}} </b>  
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <img src="eclipsebluenew.svg" class="eclipse_style" ng-if="task.status == 'Open'"/>
+                <img src="eclipseyellow.svg" class="eclipse_style" ng-if="task.status == 'Work in Progress'"/>
+                <img src="" class="img_class" ng-if="task.status == 'Awaiting User Info'"/>
+                <img src="eclipsegreen.svg" class="eclipse_style" ng-if="task.status == 'Closed Complete'"/>
+                <!--
+                <img src="" class="eclipse_style" ng-if="task.status == 'Abandoned'"/>
+                <img src="" class="eclipse_style" ng-if="task.status == 'Rejected'"/>
+                <img src="" class="eclipse_style" ng-if="task.status == ''"/>
+                -->
+              <b>{{task.status}}</b>
+             </p>
+            </div>
+            <!-- Contact analyst chat window  -->
+            <div class="col-md-6">
+            	<widget id="qrm_ticket_client_conversation" options='data.clientconversationOptions2'></widget>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Accordian 3 Business Relationship -->
+      <div class="panel panel-default">
+        <div class="panel-heading"  data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+          <h5 class="panel-title">
+            <a>
+              <b>Business Relationship</b>
+              <img src="progress.svg" class="img_class" ng-if="businessstate == 'Open'"/>
+              <img src="Inprogress.svg" class="img_class" ng-if="businessstate == 'Work in Progress'"/>
+              <img src="notStarted.svg" class="img_class" ng-if="businessstate == 'Awaiting User Info'"/> 
+              <img src="Status_close.svg" class="img_class" ng-if="businessstate == 'Closed Complete'"/> 
+              <!--
+              <img src="" class="img_class" ng-if="businessstate == 'Abandoned'"/>
+              <img src="" class="img_class" ng-if="businessstate == 'Rejected'"/>
+              <img src="" class="img_class" ng-if="businessstate == ''"/>
+              -->
+            </a>
+          </h5>
+          	<span id="s5">
+            	<img src="Arrow_Up.svg" class="hide"/>
+          	</span>
+            <span id="s6">
+              <img src="Arrow_Down.svg" class="show"/>
+            </span>
+          <!--
+          <span>Actions({{clientcount}})</span>
+					-->
+        </div>
+        <!-- Collapsed content  -->
+        <div id="collapse3" class="panel-collapse collapse">
+          <div class="panel-body">
+            <!-- Task details & Status  -->
+            <div class="col-md-6">
+              <p ng-repeat = "task in businessTaskData">
+                <b>{{task.number}} </b>  
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <img src="eclipsebluenew.svg" class="eclipse_style" ng-if="task.status == 'Open'"/>
+                  <img src="eclipseyellow.svg" class="eclipse_style" ng-if="task.status == 'Work in Progress'"/>
+                  <img src="" class="img_class" ng-if="task.status == 'Awaiting User Info'"/>
+                  <img src="eclipsegreen.svg" class="eclipse_style" ng-if="task.status == 'Closed Complete'"/>
+                <!--
+                  <img src="" class="eclipse_style" ng-if="task.status == 'Abandoned'"/>
+                  <img src="" class="eclipse_style" ng-if="task.status == 'Rejected'"/>
+                  <img src="" class="eclipse_style" ng-if="task.status == ''"/>
+                -->
+                <b>{{task.status}}</b>
+              </p>
+            </div>
+            <!-- Contact analyst chat window -->
+            <div class="col-md-6">
+            	<widget id="qrm_ticket_business_conversation" options='data.businessconverOptions3'></widget>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Accordian 4 Engagement Acceptance -->
+      <div class="panel panel-default">
+        <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+          <h5 class="panel-title">
+            <a>
+              <b>Engagement Acceptance</b>
+              <img src="progress.svg" class="img_class" ng-if="engagementstate == 'Open'"/>
+              <img src="Inprogress.svg" class="img_class" ng-if="engagementstate == 'Work in Progress'"/>
+              <img src="notStarted.svg" class="img_class" ng-if="engagementstate == 'Awaiting User Info'"/> 
+              <img src="Status_close.svg" class="img_class" ng-if="engagementstate == 'Closed Complete'"/> 
+              <!--
+              <img src="" class="img_class" ng-if="engagementstate == 'Abandoned'"/>
+              <img src="" class="img_class" ng-if="engagementstate == 'Rejected'"/>
+              <img src="" class="img_class" ng-if="engagementstate == ''"/>
+              -->
+            </a>
+          </h5>
+          <span id="s7">
+            	<img src="Arrow_Up.svg" class="hide"/>
+          	</span>
+            <span id="s8">
+              <img src="Arrow_Down.svg" class="show"/>
+            </span>
+          <!--
+          <span>Actions({{clientcount}})</span>
+					-->
+        </div>
+        <!-- Collapsed content  -->
+        <div id="collapse4" class="panel-collapse collapse">
+          <div class="panel-body">
+            <!-- Task details & Status  -->
+            <div class="col-md-6">
+              <p ng-repeat = "task in engagementTaskData">
+               <b>{{task.number}} </b>  
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             	  <img src="eclipsebluenew.svg" class="eclipse_style" ng-if="task.status == 'Open'"/>
+                <img src="eclipseyellow.svg" class="eclipse_style" ng-if="task.status == 'Work in Progress'"/>
+                <img src="" class="img_class" ng-if="task.status == 'Awaiting User Info'"/>
+                <img src="eclipsegreen.svg" class="eclipse_style" ng-if="task.status == 'Closed Complete'"/>
+                <!--
+                <img src="" class="eclipse_style" ng-if="task.status == 'Abandoned'"/>
+                <img src="" class="eclipse_style" ng-if="task.status == 'Rejected'"/>
+                <img src="" class="eclipse_style" ng-if="task.status == ''"/>
+                -->
+              <b>{{task.status}}</b>
+             </p>
+            </div>
+            <!-- Contact analyst chat window  {{c.data.engagementconverOptions}} -->
+            <div class="col-md-6">
+	       			<widget id="qrm_ticket_engagement_conversation" options='data.engagementconverOptions4'></widget>
+            </div> 
+          </div>
+        </div>
+      </div> 
+     
+    </div>]]></template>
+    </sp_widget>
+</record_update>

@@ -6,18 +6,18 @@
         <size_lg/>
         <size_sm/>
         <size_xs/>
-        <sp_row display_value="1">446e4c27db5858900d7cfe1b689619d3</sp_row>
+        <sp_row display_value="1">d57806aadb6050d00d7cfe1b68961992</sp_row>
         <sys_class_name>sp_column</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2020-04-26 15:26:51</sys_created_on>
-        <sys_id>806e4c27db5858900d7cfe1b689619d5</sys_id>
+        <sys_created_on>2020-05-06 08:02:01</sys_created_on>
+        <sys_id>11780eaadb6050d00d7cfe1b689619d7</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>1</sys_name>
         <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
         <sys_policy/>
         <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
-        <sys_update_name>sp_column_806e4c27db5858900d7cfe1b689619d5</sys_update_name>
+        <sys_update_name>sp_column_11780eaadb6050d00d7cfe1b689619d7</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-04-26 15:26:51</sys_updated_on>
+        <sys_updated_on>2020-05-06 08:02:01</sys_updated_on>
     </sp_column>
 </record_update>

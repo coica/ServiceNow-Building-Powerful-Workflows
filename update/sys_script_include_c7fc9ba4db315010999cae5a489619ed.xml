@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_hotel.DictionaryUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>DictionaryUtils</name>
+        <script><![CDATA[var tableList = ''; // resultant lookup string that would be returned
+
+var DictionaryUtils = Class.create();
+
+DictionaryUtils.prototype = {
+
+   initialize: function() {
+
+   },
+
+   //Recursive method for retrieving all Tables in the Hierarchy for a given table.
+
+   //USAGE: new DictionaryUtils().getTableNameList('cmdb_ci_computer');
+
+   //RETURNED: name='cmdb_ci_computer'^ORname='cmdb_ci_hardware'^ORname='cmdb_ci'
+
+   getTableNameList : function(tableName) {
+
+           // construct our lookup string
+
+           tableList += "name=" + tableName + "^OR";
+
+           // lookup the given table to retrieve our next super class name
+
+           var tableLookup = GlideRecord('sys_db_object');
+
+           tableLookup.addQuery('name', tableName);
+
+           tableLookup.query();
+
+           // chase each super class (i.e. parent) up the chain.
+
+           // the topmost parent will NOT have a parent
+
+           if (tableLookup.next() && tableName != '') {
+
+                   this.getTableNameList(tableLookup.super_class.name + '');
+
+           }
+
+           // peel off the last ^OR on the end of the lookup 
+
+           // string and return it to the calling method.
+
+           return tableList.substring(0, tableList.length - 3) + '^element!=NULL';
+
+   },
+
+   type: 'DictionaryUtils'
+
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-07-01 12:22:29</sys_created_on>
+        <sys_id>c7fc9ba4db315010999cae5a489619ed</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>DictionaryUtils</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_c7fc9ba4db315010999cae5a489619ed</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-07-01 12:22:29</sys_updated_on>
+    </sys_script_include>
+</record_update>

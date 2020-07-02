@@ -51,7 +51,7 @@
         <update_guid_history>d09a62c19adcd0905fd4579255c198d5:-2001647346</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="ACWidget - Test Page - Container 2">a7da6ec1dbdcd0900d7cfe1b68961984</sys_audit_delete>
+        <sys_audit_delete display_value="">a7da6ec1dbdcd0900d7cfe1b68961984</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-04-19 08:25:46</sys_created_on>

@@ -55,7 +55,7 @@
         <update_guid_history>5bbc7f6220a450d08e603f5c14c8010c:580618489</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="User Profile">a25df3a2dba450d00d7cfe1b689619a2</sys_audit_delete>
+        <sys_audit_delete display_value="">a25df3a2dba450d00d7cfe1b689619a2</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-05-06 16:32:44</sys_created_on>

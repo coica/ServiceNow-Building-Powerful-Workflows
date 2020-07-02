@@ -20,7 +20,7 @@
         <size>md</size>
         <sp_column display_value="1">11780eaadb6050d00d7cfe1b689619d7</sp_column>
         <sp_page/>
-        <sp_widget display_value="AC Custom Data Table v1">4db1a78edbe23300f9699006db9619c2</sp_widget>
+        <sp_widget display_value="">4db1a78edbe23300f9699006db9619c2</sp_widget>
         <sys_class_name>sp_instance_table</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-05-06 08:02:01</sys_created_on>

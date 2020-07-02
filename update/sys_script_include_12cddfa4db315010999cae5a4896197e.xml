@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_hotel.RemediationPlanWSUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>RemediationPlanWSUtils</name>
+        <script><![CDATA[var RemediationPlanWSUtils = Class.create();
+RemediationPlanWSUtils.prototype = {
+   initialize: function() {
+      this.fieldList = this._getRemediationPlanDictionary();
+   },
+   fieldList: [],
+   stateModelAndFields: {
+      '1': { // Under Qualification
+         'mandatory': ['root_cause', 'description', 'type', 'nature', 'implementation_difficulty', 'deployment_difficulty', 'delivery_date', 'source_anomaly'],
+         'state_transition': [1, 2]
+      },
+      '2': { // Pending prioritization 
+         'mandatory': ['priority'],
+         'state_transition': [2, 3]
+      },
+      '3': { // Remediation to launch ok
+         'mandatory': [],
+         'state_transition': [3, 4]
+      },
+      '4': { // Remediation ongoing ok
+         'mandatory': ['start_date'],
+         'state_transition': [4, 5]
+      },
+      '5': { // Remediation completed ok
+         'mandatory': ['end_date'],
+         'state_transition': [5, 6, 7]
+      },
+      '6': { // Remediation refused
+         'mandatory': [],
+         'state_transition': [6]
+      },
+      '7': { // Remediation validated
+         'mandatory': [],
+         'state_transition': [7]
+      },
+      '8': { // Remediation Cancelled
+         'mandatory': ['cancelled_reason'],
+         'state_transition': [8, 3]
+      },
+      '0': { // To define
+         'mandatory': [],
+         'state_transition': [0, 1]
+      }
+   },
+
+   _getRemediationPlanDictionary: function() {
+      var RemediationPlanDict = new GlideRecord('sys_dictionary');
+      RemediationPlanDict.addQuery('nameIN' + 'x_sgf_daqboard_remediation_plan,task' + '^active=true');
+      RemediationPlanDict.query();
+      var dictObj = {};
+      while (RemediationPlanDict.next()) {
+         if (!gs.nil(RemediationPlanDict.getValue('element')) && RemediationPlanDict.getValue('element').indexOf('sys_') != 0) {
+            dictObj[RemediationPlanDict.getValue('element')] = {
+               'type': RemediationPlanDict.getValue('internal_type'),
+               'reference': RemediationPlanDict.getValue('reference'),
+               'choices': RemediationPlanDict.getValue('internal_type') == 'choice' || RemediationPlanDict.getValue('internal_type') == 'list' ? this._getChoices('x_sgf_daqboard_remediation_plan', RemediationPlanDict.getValue('element')) : []
+            };
+         }
+      }
+      return dictObj;
+   },
+
+   _getChoices: function(table, field) {
+      var choices = new GlideRecord('sys_choice');
+      choices.addQuery('name=' + table + '^element=' + field + '^inactive=false^language=en');
+      choices.query();
+      var choicesList = [];
+      while (choices.next()) {
+         choicesList.push(choices.getValue('value'));
+      }
+      return choicesList;
+   },
+
+   _checkMandatoryFields: function(anomaly, previousState, currentState) {
+      var mandatoryObj = {
+         'error': '',
+         'fields': []
+      };
+      var arrayUtil = new global.ArrayUtil();
+
+      var previousStateModel = this.stateModelAndFields[previousState];
+      var currentStateModel = this.stateModelAndFields[currentState];
+      //var checkTransition = arrayUtil.indexOf(previousStateModel.state_transition, currentState) != -1;
+
+      try {
+         var checkTransition = arrayUtil.contains(previousStateModel.state_transition, currentState);
+
+         //gs.info(checkTransition);
+         if (checkTransition) {
+            for (var j = 0; j < currentStateModel.mandatory.length; j++) {
+               var mandatoryField = currentStateModel.mandatory[j];
+
+               if (gs.nil(anomaly.getValue(mandatoryField))) {
+                  mandatoryObj.fields.push(mandatoryField);
+               }
+            }
+            //gs.info('test = ' + mandatoryObj.fields);
+            if (mandatoryObj.fields.length > 0) {
+               mandatoryObj.error = 'missing_mandatory_fields';
+            }
+         } else {
+            mandatoryObj.error = 'transition_not_authorized';
+         }
+         return mandatoryObj;
+      } catch (error) {
+         //response.setError(new sn_ws_err.NotAcceptableError("Requested state transition from " + previousState + " to " + currentState + " is not authorized"));
+         mandatoryObj.error = 'state_value_not_authorized';
+         return mandatoryObj;
+      }
+   },
+
+   _checkValues: function(data, anomaly) {
+      var fieldTypeIssueFields = [];
+      for (var id in this.fieldList) {
+         var fieldDetails = this.fieldList[id];
+         var dataValue = data[id];
+
+         //gs.debug(id + ' - ' + dataValue + ' - ' + JSON.stringify(fieldDetails));
+         if (!gs.nil(dataValue)) {
+            if (fieldDetails.type == 'choice') {
+               if (!this._checkChoiceValue(fieldDetails.choices, dataValue)) {
+                  fieldTypeIssueFields.push(id);
+               } else {
+                  anomaly[id].setValue(dataValue);
+
+               }
+            } else if (fieldDetails.type == 'reference') {
+               if (!this._checkReferenceValue(fieldDetails.reference, dataValue)) {
+                  fieldTypeIssueFields.push(id);
+               } else {
+                  anomaly[id].setDisplayValue(dataValue);
+
+               }
+            } else if (fieldDetails.type == 'list') {
+               var dataValuesArray = dataValue.split(',');
+
+               for (var i = 0; i < dataValuesArray.length; i++) {
+                  if (fieldDetails.choices.length > 0) {
+                     if (!this._checkChoiceValue(fieldDetails.choices, dataValuesArray[i])) {
+                        fieldTypeIssueFields.push(id);
+                     }
+                  } else {
+                     if (!this._checkReferenceValue(fieldDetails.reference, dataValuesArray[i])) {
+                        fieldTypeIssueFields.push(id);
+                     }
+                  }
+               }
+               if (fieldTypeIssueFields.indexOf(id) < 0) {
+                  anomaly[id].setValue(dataValue);
+               }
+            }
+         }
+      }
+      return fieldTypeIssueFields;
+   },
+
+   _checkChoiceValue: function(choiceList, choice) {
+      var arrayUtil = new global.ArrayUtil();
+      return arrayUtil.indexOf(choiceList, choice) != -1;
+   },
+
+   _checkReferenceValue: function(refTable, refValue) {
+      var refCheck = new GlideRecord(refTable);
+      refCheck.get(refValue);
+      return refCheck.isValidRecord();
+   },
+
+   _autoFieldCompletion: function(remediationPlan) {
+      //if (remediationPlan.isNewRecord()) {
+      //Logic of auto completion fields
+      //Populate the remediation plan owner with the current user id.
+
+      // Populate herited remediation plan fields:
+
+      // var anomaly_creator = .........result[0].getAttribute("anomaly_creator");
+      // var anomaly_validator = ..........result[0].getAttribute("anomaly_validator");
+      // var group_remediation = ...........result[0].getAttribute("group_remediation");
+      // var group_remediation_prior = ........result[0].getAttribute("group_remediation_prior");
+      // var bu_su = .........result[0].getAttribute("bu_su_in_charge");
+
+      // 		g_form.setValue("anomaly_creator", anomaly_creator);
+      // 		g_form.setValue("anomaly_validator", anomaly_validator);
+      // 		g_form.setValue("group_remediation", group_remediation);
+      // 		g_form.setValue("group_remediation_prioritization", group_remediation_prior);
+      // 		g_form.setValue("bu_su_in_charge", bu_su);
+
+      // 			var uid = sysparm_uid;
+      // 			var userRec = new GlideRecord('sys_user');
+      // 			userRec.addQuery('user_name',uid);
+      // 			userRec.query();
+      // 			gr.setValue(owner, userRec.user_name);
+
+      //}
+   },
+
+   getRemediationPlanDetails: function(idRem, response) {
+      var remediationPlan = {};
+      var remediationPlanReq = new GlideRecord('x_sgf_daqboard_remediation_plan');
+      remediationPlanReq.addQuery('number=' + idRem + '^ORsys_id=' + idRem);
+      remediationPlanReq.query();
+      if (remediationPlanReq.next()) {
+         for (var id in remediationPlanReq) {
+            if (!gs.nil(remediationPlanReq.getElement(id))) {
+
+               //option 1 : outputs key + value on three lines :
+               remediationPlan[id] = {
+                  'value': remediationPlanReq.getValue(id) + '',
+                  'display_value': remediationPlanReq.getValue(id) + '' == '' ? '' : remediationPlanReq.getElement(id).getDisplayValue()
+               };
+
+               //option 2 : outputs key-valueg (DisplayValue) pairs on one line :
+               //                 				if (this.fieldIsAReference(remediationPlanReq.getValue(id)) == true) {
+               // 					remediationPlan = this.addToObject(remediationPlan, id , remediationPlanReq.getElement(id).getDisplayValue());
+               // 									}
+               // 									else {
+               // 										remediationPlan = this.addToObject(remediationPlan, id, remediationPlanReq.getElement(id).getDisplayValue());
+               // 									}
+            }
+         }
+         //response.setStatus(200);
+         return remediationPlan;
+      } else {
+         response.setError(new sn_ws_err.NotFoundError("Resource found for anomaly " + idRem));
+         return;
+      }
+   },
+
+   getAvailableFields: function() {
+      //GET ALL fields for table 'task' except fields with "sys" :
+      var AvailableTaskFields = [];
+      var taskfields = new GlideRecord('sys_dictionary');
+      taskfields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^elementNOT LIKEsys'); //To ignore all fields with "sys"
+      taskfields.query();
+      var taskfieldsCount = taskfields.getRowCount();
+      //gs.info("ACO - STRY2722867 - taskfieldssCount : " + taskfieldsCount);
+
+      while (taskfields.next()) {
+         AvailableTaskFields.push(taskfields.element.toString());
+      }
+      //GET ALL fields for table 'x_sgf_daqboard_remediation_plan' and stick them in a table :
+      var AvailableRemediationPlanFields = [];
+      var fields = new GlideRecord('sys_dictionary');
+      fields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^element!=sys_id'); //To ignore all the table dictionaries(optional)
+      fields.query();
+      var fieldsCount = fields.getRowCount();
+      while (fields.next()) {
+         AvailableRemediationPlanFields.push(fields.element.toString());
+      }
+      //GET ALL fields for table 'task' + 'x_sgf_daqboard_remediation_plan' except fields with "sys" :
+      var AvailableFields = [];
+      AvailableFields = AvailableTaskFields.concat(AvailableRemediationPlanFields);
+      return AvailableFields;
+   },
+
+   getMandatoryFields: function() {
+      //GET  List of mandatory fields :
+      var mandatoryFields = ['root_cause', 'description', 'type', 'nature', 'implementation_difficulty', 'deployment_difficulty', 'delivery_date'];
+      return mandatoryFields;
+   },
+
+   getAvailableTypeReferenceFields: function() {
+      //GET ALL fields for table 'task' except fields with ...
+      var AvailableTaskFields = [];
+      var taskfields = new GlideRecord('sys_dictionary');
+      taskfields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=reference^elementNOT LIKEsys'); //To ignore all fields with "sys"
+      taskfields.query();
+      var taskfieldsCount = taskfields.getRowCount();
+      while (taskfields.next()) {
+         AvailableTaskFields.push(taskfields.element.toString());
+      }
+      //GET ALL fields for table 'x_sgf_daqboard_remediation_plan' and stick them in a table :
+      var AvailableRemediationPlanFields = [];
+      var fields = new GlideRecord('sys_dictionary');
+      fields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=reference^element!=sys_id'); //To ignore all the table dictionaries(optional)
+      fields.query();
+      var fieldsCount = fields.getRowCount();
+
+      while (fields.next()) {
+         AvailableRemediationPlanFields.push(fields.element.toString());
+      }
+      //GET ALL fields for table 'task' + 'x_sgf_daqboard_remediation_plan' except fields with "sys" :
+      var AvailableFields = [];
+      AvailableFields = AvailableTaskFields.concat(AvailableRemediationPlanFields);
+      return AvailableFields;
+   },
+
+   getAvailableTypeChoiceFields: function() {
+
+      //GET ALL fields for table 'task' except fields with ... :
+      var AvailableTaskFields = [];
+      var taskfields = new GlideRecord('sys_dictionary');
+      taskfields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=choice^elementNOT LIKEsys'); //To ignore all fields with "sys"
+      taskfields.query();
+      var taskfieldsCount = taskfields.getRowCount();
+      while (taskfields.next()) {
+         AvailableTaskFields.push(taskfields.element.toString());
+      }
+      //GET ALL fields for table 'x_sgf_daqboard_remediation_plan' and stick them in a table :
+      var AvailableRemediationPlanFields = [];
+      var fields = new GlideRecord('sys_dictionary');
+      fields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=choice^element!=sys_id'); //To ignore all the table dictionaries(optional)
+      fields.query();
+      var fieldsCount = fields.getRowCount();
+      while (fields.next()) {
+         AvailableRemediationPlanFields.push(fields.element.toString());
+      }
+      //GET ALL fields for table 'task' + 'x_sgf_daqboard_remediation_plan' except fields with "sys" :
+      var AvailableFields = [];
+      AvailableFields = AvailableTaskFields.concat(AvailableRemediationPlanFields);
+      return AvailableFields;
+   },
+
+   fieldIsAReference: function(field) {
+      var IsAReference = false;
+      //get lists of AvailableTypeReference Fields
+      var AvailableTypeReferenceFields = [];
+      AvailableTypeReferenceFields = this.getAvailableTypeReferenceFields();
+      for (var b = 0; b < AvailableTypeReferenceFields.length; b++) {
+         if (AvailableTypeReferenceFields[b] == field) {
+            IsAReference = true;
+         }
+      }
+      return IsAReference;
+   },
+
+   getTableOfReferenceField: function(ReferenceField) {
+      var TableOfReferenceField = "";
+      var checkedFieldTypeReferenceTable = new GlideRecord('sys_dictionary');
+      checkedFieldTypeReferenceTable.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=reference');
+      checkedFieldTypeReferenceTable.query();
+      while (checkedFieldTypeReferenceTable.next()) {
+         if (checkedFieldTypeReferenceTable.element == ReferenceField) {
+            TableOfReferenceField = checkedFieldTypeReferenceTable.reference;
+            return checkedFieldTypeReferenceTable.reference;
+         }
+      }
+      return TableOfReferenceField;
+   },
+
+   fieldIsAValidReference: function(field, source) {
+
+      var IsAReference = false;
+      var ValidReference = "";
+      var TableOfReferenceField = "";
+      IsAReference = this.fieldIsAReference(field);
+      gs.info('field = ' + field);
+      if (IsAReference == true) {
+         TableOfReferenceField = this.getTableOfReferenceField(field);
+
+         var gr = new GlideRecord(TableOfReferenceField);
+         if (TableOfReferenceField == "x_sgf_daqboard_anomaly") {
+            gr.addQuery('number=' + source + '^ORsys_id=' + source);
+            gr.query();
+            gr.next();
+         } else {
+            if ((TableOfReferenceField == "sys_user") || (TableOfReferenceField == "sys_user_group") || (TableOfReferenceField == "cmn_department") || (TableOfReferenceField == "bu_su_in_charge")) {
+               gr.addQuery('name=' + source + '^ORsys_id=' + source);
+               gr.query();
+               gr.next();
+            } else {
+               //Default : use number or output and Error
+               //gr.addQuery('number', source);
+               gr.get(source);
+            }
+         }
+
+         var grCount = gr.getRowCount();
+         if (gr.isValidRecord()) {
+            referenceID = gr.sys_id;
+            return true;
+         } else {
+            return false;
+         }
+      }
+      return false;
+   },
+
+   fieldIsChoice: function(field) {
+      var IsChoice = false;
+      //get lists of AvailableTypeChoice Fields
+      var AvailableTypeChoiceFields = [];
+      AvailableTypeChoiceFields = this.getAvailableTypeChoiceFields();
+      for (var b = 0; b < AvailableTypeChoiceFields.length; b++) {
+         if (AvailableTypeChoiceFields[b] == field) {
+            IsAChoice = true;
+            return true;
+         }
+      }
+      return IsChoice;
+   },
+
+   fieldIsAValidChoice: function(field, source) {
+      // generic approach for Choice fields :
+      var IsAValidChoice = false;
+      var IsAChoice = false;
+      var ValidChoice = "";
+      var TableOfChoiceField = "";
+      var gr = new GlideRecord('sys_choice');
+      gr.addQuery('element', field);
+      gr.query();
+      var grCount = gr.getRowCount();
+      while (gr.next()) {
+         if ((gr.element == field) && (gr.value == source)) {
+            IsAValidChoice = true;
+            return IsAValidChoice;
+         } else {
+            IsAValidChoice = false;
+         }
+      }
+      return IsAValidChoice;
+   },
+
+   getAvailableTypeListFields: function() {
+      //GET ALL fields for table 'task' except fields with ...
+      var AvailableTaskFields = [];
+      var taskfields = new GlideRecord('sys_dictionary');
+      taskfields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=glide_list^elementNOT LIKEsys'); //To ignore all fields with "sys"
+      taskfields.query();
+      var taskfieldsCount = taskfields.getRowCount();
+      while (taskfields.next()) {
+         AvailableTaskFields.push(taskfields.element.toString());
+      }
+
+      //GET ALL fields for table 'x_sgf_daqboard_remediation_plan' and stick them in a table :
+      var AvailableRemediationPlanFields = [];
+      var fields = new GlideRecord('sys_dictionary');
+      fields.addEncodedQuery('nameINx_sgf_daqboard_remediation_plan,task^internal_type=glide_list^element!=sys_id'); //To ignore all the table dictionaries(optional)
+      fields.query();
+      var fieldsCount = fields.getRowCount();
+      while (fields.next()) {
+         AvailableRemediationPlanFields.push(fields.element.toString());
+      }
+
+      //GET ALL fields for table 'task' + 'x_sgf_daqboard_remediation_plan' except fields with "sys" :
+      var AvailableFields = [];
+      AvailableFields = AvailableTaskFields.concat(AvailableRemediationPlanFields);
+      return AvailableFields;
+   },
+
+   fieldIsList: function(field) {
+      var IsList = false;
+      var AvailableTypeListFields = [];
+      AvailableTypeListFields = this.getAvailableTypeListFields();
+      for (var b = 0; b < AvailableTypeListFields.length; b++) {
+         if (AvailableTypeListFields[b] == field) {
+            IsAList = true;
+            return true;
+         }
+      }
+      return IsList;
+   },
+
+   fieldIsAValidList: function(field, source) {
+      var IsAValidList = false;
+      var IsAList = false;
+      var ValidList = "";
+      var TableOfListField = "";
+      var IsAValidListElement = false;
+      IsAList = this.fieldIsList(field);
+      if (IsAList == true) {
+         var dataValuesArray = source.split(',');
+         for (var i = 0; i < dataValuesArray.length; i++) {
+            IsAValidListElement = this.fieldIsAValidChoice(field, [dataValuesArray[i]]);
+            if (IsAValidListElement == true) {
+               IsAValidList = true;
+            } else {
+               IsAValidList = false;
+            }
+         }
+      }
+      return IsAValidList;
+   },
+
+   getRemediationPlanInfo: function(request, body) {
+      var RemediationPlan = {};
+      var pathParams = request.pathParams;
+      var numberParam = pathParams.number;
+      var RemediationPlanReq = new GlideRecord('x_sgf_daqboard_remediation_plan');
+      RemediationPlanReq.addQuery('number', numberParam);
+      RemediationPlanReq.query();
+
+      if (RemediationPlanReq.next()) {
+
+         for (var id in RemediationPlanReq) {
+            if (!gs.nil(RemediationPlanReq.getElement(id)) && RemediationPlanReq.getElement(id).canRead()) {
+
+               //option 1 : outputs key + value on three lines :
+               RemediationPlan[id] = {
+                  'value': RemediationPlanReq.getValue(id) + '',
+                  'display_value': RemediationPlanReq.getValue(id) + '' == '' ? '' : RemediationPlanReq.getElement(id).getDisplayValue()
+               };
+            }
+         }
+         return RemediationPlan;
+      } else {
+         body.number = "Not Found";
+         body.numberparam = numberParam;
+         return body;
+      }
+   },
+
+   addToObject: function(obj, key, value, index) {
+      // Create a temp object and index variable
+      var temp = {};
+      var i = 0;
+      // Loop through the original object
+      for (var prop in obj) {
+         if (obj.hasOwnProperty(prop)) {
+            // If the indexes match, add the new item
+            if (i === index && key && value) {
+               temp[key] = value;
+            }
+            // Add the current item in the loop to the temp obj
+            temp[prop] = obj[prop];
+            // Increase the count
+            i++;
+         }
+      }
+      // If no index, add to the end
+      if (!index && key && value) {
+         temp[key] = value;
+      }
+      return temp;
+   },
+
+   createRemediationPlan: function(request, body) {
+      var pathParams = request.pathParams;
+      var numberParam = pathParams.number;
+      var gr;
+      var RemediationPlan = [];
+      var requestbody = request.body;
+      //get lists of All Available Fields
+      var availableFields = [];
+      availableFields = this.getAvailableFields();
+      //get lists of Mandatory Fields
+      var mandatoryFields = [];
+      mandatoryFields = this.getMandatoryFields();
+      //get lists of AvailableTypeReference Fields
+      var AvailableTypeReferenceFields = [];
+      AvailableTypeReferenceFields = this.getAvailableTypeReferenceFields();
+      //get lists of AvailableTypeChoice Fields
+      var AvailableTypeChoiceFields = [];
+      AvailableTypeChoiceFields = this.getAvailableTypeChoiceFields();
+      //get lists of AvailableTypeList Fields
+      var AvailableTypeListFields = [];
+      AvailableTypeListFields = this.getAvailableTypeListFields();
+      var requestData = requestbody.data;
+      var mandatoryFieldsNotFound = false;
+      var referenceID = "";
+      var insertStateValue = "1"; //default for creation - used if not set in input
+      var arrayUtil = new global.ArrayUtil();
+
+      //start loop "if more than one record to create in requestData"
+      //for (i = 0; i < requestData.length; i++) {  //option if we need create records in bulk
+      //  for (i = 0; i < 1; i++) { //process only one record from input
+
+      //get requestDataKeys list of Keys from key-pairs from requestData[i] input
+      var obj = requestData;
+      var requestDataKeys = Object.keys(obj);
+
+      //check case of mandatory fields provided is blank
+      for (j = 0; j < mandatoryFields.length; j++) {
+
+         if (gs.nil(requestData[mandatoryFields[j]])) {
+
+            response.setError(new sn_ws_err.NotAcceptableError(" mandatory fields provided is blank : " + mandatoryFields[j]));
+            mandatoryFieldsNotFound = true;
+         }
+      }
+      //if check mandatory fields not provided set error and return
+      if (mandatoryFieldsNotFound == true) {
+         return;
+      }
+      //Create new Record
+      gr = new GlideRecord('x_sgf_daqboard_remediation_plan');
+      gr.initialize();
+
+      if (gr.canCreate()) {
+         //start loop "in requestDataKeys list of Keys from key-pairs from requestData input"
+         for (var id in requestData) {
+            var fieldName = id;
+            var insertValue = requestData[fieldName];
+            if (!gs.nil(insertValue)) {
+               if (fieldName == "state") {
+                  insertStateValue = insertValue;
+                  if (insertStateValue != "1") {
+                     //insertStateValue = "1";
+                     response.setError(new sn_ws_err.NotAcceptableError("State value is NOT '1' for creation : " + fieldName + " value received : " + insertStateValue));
+                     return;
+                  }
+               }
+               //start loop "in availableFields list
+               //for (m = 0; m < availableFields.length; m++) {
+               // match availableField with input keys - sanity check input &
+               if (arrayUtil.contains(availableFields, fieldName)) {
+                  //sanity check each Reference Fields
+                  //for (var g = 0; g < AvailableTypeReferenceFields.length; g++) {
+                  if (arrayUtil.contains(AvailableTypeReferenceFields, fieldName)) {
+                     if (this.fieldIsAValidReference(fieldName, insertValue) == false) {
+                        response.setError(new sn_ws_err.NotAcceptableError("Reference is NOT found for : " + fieldName + " received : " + insertValue));
+                        return;
+                     }
+                  }
+                  //}
+                  //End sanity check each Reference Fields
+
+                  //sanity check each choice Fields
+                  if (arrayUtil.contains(AvailableTypeChoiceFields, fieldName)) {
+                     if (this.fieldIsAValidChoice(fieldName, insertValue) == false) {
+                        response.setError(new sn_ws_err.NotAcceptableError("Choice is NOT valid for : " + fieldName + " received : " + insertValue));
+                        return;
+                     }
+                  }
+                  //}
+
+                  //End sanity check each choice Fields
+
+                  //sanity check each list / choice Fields
+                  if (arrayUtil.contains(AvailableTypeListFields, fieldName)) {
+                     if (this.fieldIsAValidList(fieldName, insertValue) == false) {
+                        response.setError(new sn_ws_err.NotAcceptableError("Choice is NOT valid for list / choice: " + fieldName + " received : " + insertValue));
+                        return;
+                     }
+                  }
+                  //End sanity check each list / choice Fields
+
+                  //sanity check if Fields is "source_anomaly"
+                  if (fieldName == "source_anomaly") {
+                     //Process sourceAnomaly (reference) specifically
+                     //verify if the source anomaly is prioritized (state > 3) - if not an error should be returned
+                     var sourceAnomalyNumber = insertValue;
+                     var grSourceAnomaly = new GlideRecord('x_sgf_daqboard_anomaly');
+                     grSourceAnomaly.addQuery('number=' + sourceAnomalyNumber + '^ORsys_id=' + sourceAnomalyNumber);
+                     grSourceAnomaly.query();
+                     var grSourceAnomalyCount = grSourceAnomaly.getRowCount();
+                     if (grSourceAnomaly.next()) {
+                        referenceID = grSourceAnomaly.sys_id;
+                     } else {
+                        response.setError(new sn_ws_err.NotAcceptableError("source anomaly is NOT found : " + insertValue));
+                        return;
+                     }
+                     //verify if the source anomaly is prioritized (state > 3) - if not an error should be returned
+                     if (grSourceAnomaly.state < 4) {
+                        response.setError(new sn_ws_err.NotAcceptableError("source anomaly is NOT prioritized : " + grSourceAnomaly.getDisplayValue()));
+                        return;
+                     }
+                  }
+                  //end sanity check if Fields is "source_anomaly"
+                  gr.setValue(fieldName, insertValue);
+               }
+               //} //end loop "in availableFieldss list
+            }
+         } //enf loop "in requestDataKeys list of Keys from key-pairs from requestData input"
+
+         //check fieldType & State transition & mandatoryFields :
+
+         var fieldTypeIssues = this._checkValues(requestData, gr);
+         if (fieldTypeIssues.length > 0) {
+            response.setError(new sn_ws_err.NotAcceptableError("Fields " + fieldTypeIssues.join() + " are not matching the expected format."));
+            return;
+         }
+         var mandatoryFieldsMissing = this._checkMandatoryFields(gr, '1', insertStateValue);
+
+         if (mandatoryFieldsMissing.error == 'missing_mandatory_fields') {
+
+            response.setError(new sn_ws_err.NotAcceptableError("Fields " + mandatoryFieldsMissing.fields.join() + " missing for state " + insertStateValue + "."));
+            return;
+         }
+
+         //add autocomplete : below
+         //this._autoFieldCompletion(remediationPlanCreated);
+
+         gr.setWorkflow(true);
+         var remediationPlanCreated = gr.insert();
+         var messages = gs.getErrorMessages();
+         referenceID = "";
+         this.createM2MAnoRediationPlan(remediationPlanCreated);
+         RemediationPlan = this.getRemediationPlanDetails(remediationPlanCreated, response);
+         //} //end loop "if more than one record to create in requestData"
+         response.setBody(RemediationPlan); //return record created
+      } else {
+         response.setError(new sn_ws_err.NotAcceptableError('User ' + gs.getUserName() + ' cannot create remediation plan.'));
+      }
+   },
+
+   createM2MAnoRediationPlan: function(remediationPlanID) {
+      var remediation = new GlideRecord('x_sgf_daqboard_remediation_plan');
+      remediation.get(remediationPlanID);
+
+      var m2m = new GlideRecord('x_sgf_daqboard_m2m_anomalies_remediation');
+      m2m.initialize();
+      m2m.remediation_plan = remediation.sys_id;
+      m2m.anomaly = remediation.source_anomaly;
+      m2m.insert();
+   },
+
+   // update with PATCH / PUT : (replaces or adds key / value)
+   UpdateReplaceRemediationPlan: function(request, body) {
+      var recordFoundSysId;
+      var pathParams = request.pathParams;
+      var numberParam = pathParams.number;
+      var RemediationPlan = [];
+      var requestbody = request.body;
+      //get lists of All Available Fields
+      var availableFields = [];
+      availableFields = this.getAvailableFields();
+      //get lists of Mandatory Fields
+      var mandatoryFields = [];
+      mandatoryFields = this.getMandatoryFields();
+      //get lists of AvailableTypeReference Fields
+      var AvailableTypeReferenceFields = [];
+      AvailableTypeReferenceFields = this.getAvailableTypeReferenceFields();
+      //get lists of AvailableTypeChoice Fields
+      var AvailableTypeChoiceFields = [];
+      AvailableTypeChoiceFields = this.getAvailableTypeChoiceFields();
+      //get lists of AvailableTypeList Fields
+      var AvailableTypeListFields = [];
+      AvailableTypeListFields = this.getAvailableTypeListFields();
+      var requestData = requestbody.data;
+      var mandatoryFieldsNotFound = false;
+      var referenceID = "";
+      var previousState = "";
+      var insertStateValue = "";
+      var ChangeOfStateRequested = false;
+      var arrayUtil = new global.ArrayUtil();
+
+      //get requestDataKeys list of Keys from key-pairs from requestData[i] input
+      //gs.info('logh body = ' + JSON.stringify(requestbody));
+      //gs.info('logh data = ' + JSON.stringify(requestbody.data));
+      var obj = requestData;
+      var requestDataKeys = Object.keys(obj);
+      //verify if RemediationPlan Requested exists - if not an error should be return
+      var gr = new GlideRecord('x_sgf_daqboard_remediation_plan');
+      gr.addQuery('number', numberParam);
+      gr.query();
+      if (gr.next()) {
+         body.number = numberParam;
+         body.sys_id = gr.sys_id;
+         recordFoundSysId = gr.sys_id;
+         previousState = gr.state;
+         insertStateValue = gr.state; //set insertStateValu default value to previous state
+      } else {
+         response.setError(new sn_ws_err.NotAcceptableError("No valid record has been found for  number " + numberParam));
+         return;
+      }
+
+      if (gr.canWrite() && gr.isValidRecord()) {
+         //check case of mandatory fields provided is blank
+         for (j = 0; j < mandatoryFields.length; j++) {
+            if (requestData[mandatoryFields[j]] == '') {
+               response.setError(new sn_ws_err.NotAcceptableError(" mandatory fields provided is blank : " + mandatoryFields[j]));
+               mandatoryFieldsNotFound = true;
+            }
+         }
+         //if check mandatory fields provided set error and return
+         if (mandatoryFieldsNotFound == true) {
+            //response.setBody(RemediationPlan); //return error
+            return;
+         }
+         //start loop "in requestDataKeys list of Keys from key-pairs from requestData input"
+         //for (k = 0; k < requestDataKeys.length; k++) {
+         for (var id in requestData) {
+            var fieldName = id;
+            var insertValue = requestData[fieldName];
+            if (!gs.nil(insertValue)) {
+               if (fieldName == "state") {
+                  insertStateValue = insertValue; //set insertStateValu to new value if provided
+
+                  if (parseInt(insertStateValue) < parseInt(previousState)) {
+                     response.setError(new sn_ws_err.NotAcceptableError("New state is lower than previous state : previous state : " + previousState + " value of requested state : " + insertStateValue));
+                     return;
+                  }
+               }
+               //start loop "in availableFields list
+               //for (m = 0; m < availableFields.length; m++) {
+               // match availableField with input keys - sanity check input &
+               if (arrayUtil.contains(availableFields, fieldName)) {
+                  //sanity check each Reference Fields
+                  if (arrayUtil.contains(AvailableTypeReferenceFields, fieldName)) {
+                     if (this.fieldIsAValidReference(fieldName, insertValue) == false) {
+                        response.setError(new sn_ws_err.NotAcceptableError("Reference is NOT found for : " + fieldName + " received : " + insertValue));
+                        return;
+                     }
+                  }
+
+                  //End sanity check each Reference Fields
+
+                  //sanity check each choice Fields
+                  if (arrayUtil.contains(AvailableTypeChoiceFields, fieldName)) {
+                     if (this.fieldIsAValidChoice(fieldName, insertValue) == false) {
+                        response.setError(new sn_ws_err.NotAcceptableError("Choice is NOT valid for : " + fieldName + " received : " + insertValue));
+                        return;
+                     }
+                  }
+
+                  //End sanity check each choice Fields
+
+                  //sanity check each list / choice Fields
+
+                  if (arrayUtil.contains(AvailableTypeListFields, fieldName)) {
+                     if (this.fieldIsAValidList(fieldName, insertValue) == false) {
+                        response.setError(new sn_ws_err.NotAcceptableError("Choice is NOT valid for list / choice: " + fieldName + " received : " + insertValue));
+                        return;
+                     }
+                  }
+
+                  //End sanity check each list / choice Fields
+                  //sanity check if Fields is "source_anomaly"
+                  if (fieldName == "source_anomaly") {
+                     //Process sourceAnomaly (reference) specifically
+                     //verify if the source anomaly is prioritized (state > 3) - if not an error should be returned
+                     var sourceAnomalyNumber = insertValue;
+                     //var sourceAnomalyId = insertValue;
+                     var grSourceAnomaly = new GlideRecord('x_sgf_daqboard_anomaly');
+                     grSourceAnomaly.addQuery('number=' + sourceAnomalyNumber + '^ORsys_id=' + sourceAnomalyNumber);
+                     grSourceAnomaly.query();
+                     //grSourceAnomaly.addQuery('number',insertValue);
+                     if (grSourceAnomaly.next()) {
+                        referenceID = grSourceAnomaly.sys_id;
+                     } else {
+                        response.setError(new sn_ws_err.NotAcceptableError("source anomaly is NOT found : " + insertValue));
+                        return;
+                     }
+                     //verify if the source anomaly is prioritized (state > 3) - if not an error should be returned
+                     if (grSourceAnomaly.state < 4) {
+                        response.setError(new sn_ws_err.NotAcceptableError("source anomaly is NOT prioritized : " + grSourceAnomaly.getDisplayValue()));
+                        return;
+                     }
+                  }
+                  //end sanity check if Fields is "source_anomaly"
+                  if (this.fieldIsAReference(fieldName) == true) {
+                     insertValue = referenceID;
+                  }
+                  gr.setValue(fieldName, insertValue);
+
+               }
+               //} //end loop "in availableFieldss list
+               //check fieldType & State transition & mandatoryFields :
+               var fieldTypeIssues = this._checkValues(requestData, gr);
+               if (fieldTypeIssues.length > 0) {
+                  response.setError(new sn_ws_err.NotAcceptableError("Fields " + fieldTypeIssues.join() + " are not matching the expected format."));
+                  return;
+               }
+
+               var mandatoryFieldsMissing = this._checkMandatoryFields(gr, previousState, insertStateValue);
+
+               if (mandatoryFieldsMissing.error == 'transition_not_authorized') {
+                  response.setError(new sn_ws_err.NotAcceptableError("State transition from " + previousState + " to " + insertStateValue + " is not authorized"));
+                  return;
+               } else if (mandatoryFieldsMissing.error == 'missing_mandatory_fields') {
+                  response.setError(new sn_ws_err.NotAcceptableError("Fields " + mandatoryFieldsMissing.fields.join() + " missing for state " + insertStateValue + "."));
+                  return;
+               } else if (mandatoryFieldsMissing.error == 'state_value_not_authorized') {
+                  response.setError(new sn_ws_err.NotAcceptableError("State value not authorized : value requested : " + insertStateValue));
+                  return;
+               }
+
+               gr.setWorkflow(true);
+               var remediationPlanCreated = gr.update();
+               var messages = gs.getErrorMessages();
+               RemediationPlan = this.getRemediationPlanDetails(remediationPlanCreated, response);
+            } //end loop on requestDataKeys
+         }
+         response.setBody(RemediationPlan); //return record updated
+      } else {
+         response.setError(new sn_ws_err.NotAcceptableError('User ' + gs.getUserName() + ' cannot edit remediation plan ' + numberParam + '.'));
+      }
+   },
+   //*****************
+   type: 'RemediationPlanWSUtils'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-07-01 12:26:19</sys_created_on>
+        <sys_id>12cddfa4db315010999cae5a4896197e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>RemediationPlanWSUtils</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_12cddfa4db315010999cae5a4896197e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-07-01 12:33:57</sys_updated_on>
+    </sys_script_include>
+</record_update>

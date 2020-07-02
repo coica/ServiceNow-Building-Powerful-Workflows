@@ -2,6 +2,7 @@
     <sp_portal action="INSERT_OR_UPDATE">
         <css_variables/>
         <default>false</default>
+        <hide_portal_name>false</hide_portal_name>
         <homepage display_value="sp_ac">e4d8cb3cdb94d0900d7cfe1b689619da</homepage>
         <icon/>
         <kb_knowledge_base/>

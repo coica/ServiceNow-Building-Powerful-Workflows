@@ -51,7 +51,7 @@
         <update_guid_history>509da96a472050d0c518b56ccc9025f4:1275753710</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="sp_ac - Container 17">bdddad6adb2050d00d7cfe1b68961920</sys_audit_delete>
+        <sys_audit_delete display_value="">bdddad6adb2050d00d7cfe1b68961920</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-05-06 06:05:43</sys_created_on>

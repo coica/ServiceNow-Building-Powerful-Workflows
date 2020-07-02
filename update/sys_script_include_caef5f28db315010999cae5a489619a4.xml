@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_hotel.DaqAnomalyWSUtils-</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>DaqAnomalyWSUtils-</name>
+        <script><![CDATA[
+var DaqAnomalyWSUtils = Class.create();
+DaqAnomalyWSUtils.prototype = {
+   initialize: function() {
+      this.fieldList = this._getAnomalyDictionary();
+   },
+
+   fieldList: [],
+
+   stateModelAndFields: {
+      '1': { // Open
+         'mandatory': ['title', 'impact_type', 'a1_activity', 'value_chain', 'scope_of_responsibility', 'description', 'mean_time_to_repair', 'seriousness', 'detailed_description', 'anomaly_originator', 'anomaly_creator', 'creator_department'],
+         'state_transition': ['1', '2']
+      },
+      '2': { // Pending validation
+         'mandatory': ['title', 'impact_type', 'description', 'mean_time_to_repair', 'seriousness', 'anomaly_type', 'detailed_description'],
+         'state_transition': ['2', '3', '9']
+      },
+      '3': { // Pending description
+         'mandatory': ['description', 'operational_impact', 'mean_time_to_repair', 'seriousness', 'anomaly_type', 'bu_su_in_charge', 'anomaly_validator'],
+         'state_transition': ['3', '4', '9']
+      },
+      '4': { // Pending department priorization
+         'mandatory': ['priority_department', 'priority_department_comments'],
+         'state_transition': ['4', '5', '9']
+      },
+      '5': { // Pending consensual prioritization
+         'mandatory': ['priority_consensual', 'priority_consensual_comments'],
+         'state_transition': ['5', '6', '9']
+      },
+      '6': { // Study to launch
+         'mandatory': [],
+         'state_transition': ['6', '7', '8']
+      },
+      '7': { // Anomaly in remediation
+         'mandatory': [],
+         'state_transition': ['7', '0']
+      },
+      '8': { // Anomaly refused
+         'mandatory': [],
+         'state_transition': ['8', '3']
+      },
+      '9': { // Abandoned
+         'mandatory': ['close_notes'],
+         'state_transition': ['9']
+      },
+      '0': { // Closed
+         'mandatory': ['efficiency_percentage_remediation', 'justification_efficiency', 'closed_at'],
+         'state_transition': ['0']
+      }
+   },
+
+   createAnomaly: function(request, response) {
+      var data = request.body.data;
+      var anomalyToCreate = new GlideRecord('x_sgf_daqboard_anomaly');
+      anomalyToCreate.initialize();
+
+      if (anomalyToCreate.canCreate()) {
+         var fieldTypeIssues = this._checkValues(data, anomalyToCreate);
+
+         if (fieldTypeIssues.length > 0) {
+            return sn_ws_err.NotAcceptableError('Fields ' + fieldTypeIssues.join() + ' are not matching the expected format.');
+         }
+         var transitionState = gs.nil(data.state) ? '1' : data.state;
+
+         var mandatoryFieldsMissing = this._checkMandatoryFields(anomalyToCreate, '1', transitionState);
+         //gs.info(JSON.stringify(mandatoryFieldsMissing));
+         if (mandatoryFieldsMissing.error == 'transition_not_authorized') {
+            return sn_ws_err.NotAcceptableError('State transition from ' + '1' + ' to ' + transitionState + ' is not authorized');
+         } else if (mandatoryFieldsMissing.error == 'missing_mandatory_fields') {
+            return sn_ws_err.NotAcceptableError('Fields ' + mandatoryFieldsMissing.fields.join() + ' are required for state ' + transitionState + '.');
+         }
+         this._autoFieldCompletion(anomalyToCreate);
+
+         anomalyToCreate.setWorkflow(true);
+         var anoCreated = anomalyToCreate.insert();
+
+         return this.getAnomalyDetails(anoCreated, response);
+      } else {
+         return sn_ws_err.NotAcceptableError('User ' + gs.getUserName() + ' is not able to create an anomaly.');
+      }
+   },
+
+   updateAnomaly: function(request, response) {
+      var data = request.body.data;
+      var pathParams = request.pathParams;
+      var numberParam = pathParams.number;
+
+      if (!gs.nil(numberParam)) {
+         var anomalyToUpdate = new GlideRecord('x_sgf_daqboard_anomaly');
+         anomalyToUpdate.addQuery('number=' + numberParam);
+         anomalyToUpdate.query();
+
+         if (anomalyToUpdate.next()) {
+            if (anomalyToUpdate.canWrite()) {
+               var transitionState = gs.nil(data.state) ? anomalyToUpdate.state : data.state;
+               var previousState = anomalyToUpdate.getValue('state');
+
+               var fieldTypeIssues = this._checkValues(data, anomalyToUpdate);
+               if (fieldTypeIssues.length > 0) {
+                  return sn_ws_err.NotAcceptableError('Fields ' + fieldTypeIssues.join() + ' are not matching the expected format.');
+               }
+
+               var mandatoryFieldsMissing = this._checkMandatoryFields(anomalyToUpdate, previousState, transitionState);
+               //gs.info(JSON.stringify(mandatoryFieldsMissing));
+               if (mandatoryFieldsMissing.error == 'transition_not_authorized') {
+                  return sn_ws_err.NotAcceptableError('State transition from ' + previousState + ' to ' + transitionState + ' is not authorized');
+               } else if (mandatoryFieldsMissing.error == 'missing_mandatory_fields') {
+                  return sn_ws_err.NotAcceptableError('Fields ' + mandatoryFieldsMissing.fields.join() + ' are required for state ' + transitionState + '.');
+               }
+
+               this._autoFieldCompletion(anomalyToUpdate);
+               anomalyToUpdate.setWorkflow(true);
+               var idAno = anomalyToUpdate.update('updated by API');
+
+               return this.getAnomalyDetails(idAno, response);
+            } else {
+               return sn_ws_err.NotAcceptableError('User ' + gs.getUserName() + ' is not able to edit an anomaly' + numberParam + '.');
+            }
+         } else {
+            return sn_ws_err.NotFoundError('Resource found for anomaly ' + numberParam);
+         }
+      } else {
+         return sn_ws_err.NotFoundError('Resource found for anomaly ' + numberParam);
+      }
+   },
+
+   getAnomalyInfo: function(request, response) {
+      var pathParams = request.pathParams;
+      var numberParam = pathParams.number;
+
+      return this.getAnomalyDetails(numberParam, response);
+   },
+
+   getAnomalyDetails: function(idAno, response) {
+      var body = {};
+      var anomalyReq = new GlideRecord('x_sgf_daqboard_anomaly');
+      anomalyReq.addQuery('number=' + idAno + '^ORsys_id=' + idAno);
+      anomalyReq.query();
+
+      if (anomalyReq.next()) {
+         for (var id in anomalyReq) {
+            if (!gs.nil(anomalyReq.getElement(id)) && anomalyReq.getElement(id).canRead()) {
+               body[id] = {
+                  'value': anomalyReq.getValue(id) + '',
+                  'display_value': anomalyReq.getValue(id) + '' == '' ? '' : anomalyReq.getElement(id).getDisplayValue()
+               };
+            }
+         }
+         response.setStatus(200);
+         response.setBody(body);
+      } else {
+         return sn_ws_err.NotFoundError('Resource found for anomaly ' + idAno);
+      }
+   },
+
+   _autoFieldCompletion: function(anomaly) {
+      if (anomaly.isNewRecord()) {
+         //TODO Logic of auto completion fields
+      }
+   },
+
+   _checkChoiceValue: function(choiceList, choice) {
+      var arrayUtil = new global.ArrayUtil();
+      return arrayUtil.indexOf(choiceList, choice) != -1;
+   },
+
+   _checkMandatoryFields: function(anomaly, previousState, currentState) {
+      var mandatoryObj = {
+         'error': '',
+         'fields': []
+      };
+
+      var previousStateModel = this.stateModelAndFields[previousState];
+      var currentStateModel = this.stateModelAndFields[currentState];
+      var arrayUtil = new global.ArrayUtil();
+      var checkTransition = arrayUtil.indexOf(previousStateModel.state_transition, currentState) != -1;
+      gs.info('transition = ' + previousStateModel.state_transition + ' currentstate=  ' + currentState + '  - index = ' + arrayUtil.indexOf(previousStateModel.state_transition, currentState) + ' - ' + checkTransition);
+      if (checkTransition) {
+         for (var j = 0; j < currentStateModel.mandatory.length; j++) {
+            var mandatoryField = currentStateModel.mandatory[j];
+
+            if (gs.nil(anomaly.getValue(mandatoryField))) {
+               mandatoryObj.fields.push(mandatoryField);
+            }
+         }
+         if (mandatoryObj.fields.length > 0) {
+            mandatoryObj.error = 'missing_mandatory_fields';
+         }
+      } else {
+         mandatoryObj.error = 'transition_not_authorized';
+      }
+      return mandatoryObj;
+   },
+
+   _checkReferenceValue: function(refTable, refValue) {
+      var refCheck = new GlideRecord(refTable);
+      refCheck.get(refValue);
+
+      return {
+         'isValidRecord': refCheck.isValidRecord(),
+         'sys_id': refCheck.getUniqueValue()
+      };
+   },
+
+   _checkValues: function(data, anomaly) {
+      var fieldTypeIssueFields = [];
+      for (var id in this.fieldList) {
+         var fieldDetails = this.fieldList[id];
+         var dataValue = data[id];
+         if (!gs.nil(dataValue)) {
+            var fieldElement = anomaly.getElement(id);
+            var fieldCanWrite = true; //fieldElement.canWrite() || fieldElement.canCreate();
+            if (fieldDetails.type == 'choice') {
+               if (!this._checkChoiceValue(fieldDetails.choices, dataValue)) {
+                  fieldTypeIssueFields.push(id);
+               } else {
+                  if (fieldCanWrite) {
+                     fieldElement.setValue(dataValue);
+                  }
+               }
+            } else if (fieldDetails.type == 'reference') {
+               var checkRefValue = this._checkReferenceValue(fieldDetails.reference, dataValue);
+               if (!checkRefValue.isValidRecord) {
+                  fieldTypeIssueFields.push(id);
+               } else {
+                  if (fieldCanWrite) {
+                     fieldElement.setValue(checkRefValue.sys_id);
+                  }
+               }
+            } else if (fieldDetails.type == 'glide_list') {
+               var dataValuesArray = dataValue.split(',');
+               var dataRefValues = [];
+               gs.info('fieldDetails = ' + JSON.stringify(fieldDetails.choices.join()));
+               for (var i = 0; i < dataValuesArray.length; i++) {
+                  if (fieldDetails.choices.length > 0) {
+                     if (!this._checkChoiceValue(fieldDetails.choices, dataValuesArray[i])) {
+                        fieldTypeIssueFields.push(id);
+                     }
+                  } else {
+                     gs.info('in list ref ' + id);
+                     var checkRefListValue = this._checkReferenceValue(fieldDetails.reference, dataValuesArray[i]);
+                     if (!checkRefListValue.isValidRecord) {
+                        fieldTypeIssueFields.push(id);
+                     } else {
+                        dataRefValues.push(checkRefListValue.sys_id);
+                     }
+                     gs.info('list ref ID - ' + id + '= ' + dataRefValues);
+                  }
+               }
+               if (fieldTypeIssueFields.indexOf(id) < 0) {
+                  if (fieldCanWrite) {
+                     if (fieldDetails.choices.length > 0) {
+                        fieldElement.setValue(dataValue);
+                     } else {
+                        fieldElement.setValue(dataRefValues.join());
+                     }
+                  }
+               }
+            } else {
+               if (fieldCanWrite) {
+                  fieldElement.setValue(dataValue);
+               }
+            }
+         }
+      }
+
+      return fieldTypeIssueFields;
+   },
+
+   _getAnomalyDictionary: function() {
+      var anomalyDict = new GlideRecord('sys_dictionary');
+      anomalyDict.addQuery('nameIN' + 'x_sgf_daqboard_anomaly,task' + '^active=true');
+      anomalyDict.query();
+
+      var dictObj = {};
+
+      while (anomalyDict.next()) {
+         if (!gs.nil(anomalyDict.getValue('element')) && anomalyDict.getValue('element').indexOf('sys_') != 0 && anomalyDict.getValue('element') != 'number') {
+            dictObj[anomalyDict.getValue('element')] = {
+               'type': anomalyDict.getValue('internal_type'),
+               'reference': anomalyDict.getValue('reference'),
+               'choices': (anomalyDict.getValue('internal_type') == 'choice' || anomalyDict.getValue('internal_type') == 'glide_list') ? this._getChoices('x_sgf_daqboard_anomaly', anomalyDict.getValue('element')) : []
+            };
+         }
+      }
+      return dictObj;
+   },
+
+   _getChoices: function(table, field) {
+      var choices = new GlideRecord('sys_choice');
+      choices.addQuery('name=' + table + '^element=' + field + '^inactive=false^language=en');
+      choices.query();
+      var choicesList = [];
+      while (choices.next()) {
+         choicesList.push(choices.getValue('value'));
+      }
+      return choicesList;
+   },
+
+   type: 'DaqAnomalyWSUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-07-01 12:35:20</sys_created_on>
+        <sys_id>caef5f28db315010999cae5a489619a4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>DaqAnomalyWSUtils-</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_caef5f28db315010999cae5a489619a4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-07-01 12:35:20</sys_updated_on>
+    </sys_script_include>
+</record_update>

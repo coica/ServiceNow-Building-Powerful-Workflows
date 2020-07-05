@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_hotel.ValidationUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>1- Check data integrity&#13;
+&#13;
+As a Data Migration app, I need to be able to validate the reference integrity of records in the system, so that I can be sure that a record is not referring to objects that does not exist in the database&#13;
+&#13;
+I can call a function with a record and depth value, and have that record and depending on depth have referenced records validated. With validation meaning that they exists is the database and are valid records. If there are discrepencies, will return these discrepencies.&#13;
+&#13;
+Create a script ValidationUtils().checkIntegrity(&lt;record&gt;,&lt;depth&gt;)&#13;
+Returns json { valid: &lt;true|false&gt;, missing:   [ {table: table, field: name, value: value} ]</description>
+        <name>ValidationUtils</name>
+        <script><![CDATA[var ValidationUtils = Class.create();
+ValidationUtils.prototype = {
+
+    initialize: function() {},
+
+
+    findRecordReferences: function(refRecordID) {
+        //background script :
+        //Try this: var ValidationUtils = new ValidationUtils(); ValidationUtils.findRecordReferences('d0bdfb2cdb715010999cae5a4896190a'); //INC0010003
+
+        //Try this: var ValidationUtils = new ValidationUtils(); ValidationUtils.findRecordReferences('8abccc694fd62200c17782818110c7e8');  //room 103
+
+        var msg = 'Matching tables and columns where this record is referenced (if any) are displayed below';
+        gs.info("returns: findRecordReferences - 1 : " + msg);
+        gs.info("returns: findRecordReferences - 2 : refRecordID : " + refRecordID);
+
+        var refTable = "";
+        refTable = this._findAnywhere(refRecordID);
+        gs.info("returns: findRecordReferences - 4 : strTable : " + refTable);
+
+
+        //Query dictionary table for reference
+
+        var dict = new GlideRecord('sys_dictionary');
+
+        //Query dictionary table for reference, document_id, and condition fields        
+        //dict.addQuery('reference', 'IN', refTable).addOrCondition('internal_type', 'document_id').addOrCondition('internal_type', 'conditions');
+
+        //Query dictionary table for reference
+
+        dict.addQuery('reference', 'IN', refTable);
+
+        //Do not query audit and log fields
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'var__m_');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'ecc_');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'ha_');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'syslog');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'sys_history');
+        dict.addQuery('name', 'DOES NOT CONTAIN', '_log');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'text_search');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'ts_');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'sys_watermark');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'sys_audit');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'sys_rw_action');
+        dict.addQuery('name', 'DOES NOT CONTAIN', 'v_private_cachen');
+        dict.orderBy('name');
+        dict.orderBy('element');
+        dict.query();
+
+        while (dict.next()) {
+            var tblName = dict.name.toString();
+
+            // Skip tables used for Table Rotation
+            var gr = new GlideRecord("sys_table_rotation_schedule");
+            gr.addQuery("name.name", '!=', tblName);
+            gr.addQuery("table_name", tblName);
+            gr.query();
+
+            if (!gr.hasNext()) {
+                var recMessage = ' records found';
+                var filterOperator = '=';
+                var refType = dict.internal_type;
+                if (refType == 'glide_list' || refType == 'conditions') {
+                    filterOperator = 'LIKE';
+                }
+
+                //Query each table for matching records
+                var rec = new GlideRecord(tblName);
+                if (refType == 'glide_list' || refType == 'conditions') {
+                    rec.addQuery(dict.element, 'CONTAINS', refRecordID);
+					
+                } else {
+                    rec.addQuery(dict.element, refRecordID);
+                }
+
+                rec.query();
+                if (rec.getRowCount() == 1) {
+                    recMessage = ' - record found';
+					
+                }
+                if (rec.getRowCount() > 0) {
+
+                    var record = new GlideRecord(refTable);
+                    record.get('sys_id', refRecordID);
+					
+					//var record2 = new GlideRecord(tblName);
+                    //record2.get('sys_id', refRecordID);
+					
+					
+
+                    //Display table/column info
+                    msg = msg + 'Table: ' + tblName + ' record : ' + rec.getDisplayValue() + ' Column [Column type]: ' + dict.element + ' [' + dict.internal_type + '] ' + ' --- ' + dict.name + ' ' + dict.element + ' ' + filterOperator + ' ' + record.getDisplayValue() + ' [sys_id : ' + refRecordID + '] ' +
+                        rec.getRowCount() + recMessage;
+                }
+            }
+        }
+
+        //Query for workflow variable values
+        tblName = 'sys_variable_value';
+        var vVal = new GlideRecord(tblName);
+        vVal.addQuery('value', 'CONTAINS', refRecordID);
+        vVal.query();
+        if (vVal.getRowCount() == 1) {
+            recMessage = ' -- record found';
+        }
+
+
+        // Found : 
+
+        if (vVal.getRowCount() > 0) {
+
+            var record2 = new GlideRecord(refTable);
+            record.get('sys_id', refRecordID);
+
+            var record1 = new GlideRecord(tblName);
+            record1.get('sys_id', refRecordID);
+
+            //Display table/column info
+            //msg = msg + 'Table: ' + tblName + ' record : ' + dict.getDisplayValue()  + 'Column [Column type]: ' + dict.element + ' [' + dict.internal_type + '] ' + ' --- ' + dict.name + ' ' + dict.element + ' ' + filterOperator + ' ' + record2.getDisplayValue() + ' [sys_id : ' + refRecordID + '] ' +
+            rec.getRowCount() + recMessage;
+
+            //Display table/column info
+            msg = msg + 'Table: ' + tblName + ' ' + 'Column [Column type]: ' + dict.element + ' [' + dict.internal_type + '] ' + ' --- ' + dict.name + ' ' + dict.element + ' ' + filterOperator + ' ' + record.getDisplayValue() + ' [sys_id : ' + refRecordID + '] ' +
+                rec.getRowCount() + recMessage;
+        }
+
+        gs.info("returns: findRecordReferences - final results : " + msg);
+
+    },
+
+    _findAnywhere: function(sysid, html) {
+        if (html !== true && html !== 'true') {
+            html = false;
+        }
+        var check;
+        var tableName;
+        var url = gs.getProperty('glide.servlet.uri');
+        var table = new GlideRecord('sys_db_object');
+        //Make sure we're not looking at a ts (text search) table.
+        table.addEncodedQuery('sys_update_nameISNOTEMPTY^nameISNOTEMPTY^nameNOT LIKEts_');
+        //Do not query audit and log fields
+        table.addQuery('name', 'DOES NOT CONTAIN', 'var__m_');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'ecc_');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'ha_');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'syslog');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'sys_history');
+        table.addQuery('name', 'DOES NOT CONTAIN', '_log');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'text_search');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'ts_');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'sys_watermark');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'sys_audit');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'sys_rw_action');
+        table.addQuery('name', 'DOES NOT CONTAIN', 'v_private_cachen');
+
+        table.query();
+        while (table.next()) {
+            tableName = table.getValue('name');
+            check = new GlideRecord(tableName);
+            if (check.get(sysid)) {
+                if (html) {
+                    return tableName;
+                } else {
+                    return tableName;
+                }
+            }
+        }
+    },
+
+    checkRelationship: function(parentRec, child, maxDepth) {
+        //(function executeRule(current, previous /*null when async*/) { 
+
+        var fieldName = 'parent'; //Specify the name of the field to check for circular relationship on
+        var firstParent = current[fieldName].getRefRecord();
+
+        //If we have a valid record in the parent field check circular relationships
+        if (firstParent && firstParent.isValidRecord()) {
+            checkCircularRelationship(firstParent, current, fieldName, maxDepth);
+        }
+
+    },
+
+
+
+    checkCircularRelationship: function(parentRec, child, fieldName, maxDepth) {
+        var depth = 0;
+        //Safety check to prevent endless loop in the event that a circular relationship already exists
+        //Increase the current depth
+        depth++;
+
+        //If we have gone more than the allowed depth then abort
+        if (depth > maxDepth) {
+            current.setAbortAction(true);
+            //gs.addInfoMessage('Possible circular relationship already exists.  Aborting check to prevent endless loop.');
+            return null;
+        }
+
+        //If the current parent being evaluated matches the child then abort
+        if (parentRec.sys_id == child.sys_id) {
+            //Abort the submission
+            //gs.addErrorMessage('Relating to the chosen parent value creates a circular relationship.<br/>  Please choose a different parent.');
+            current.setAbortAction(true);
+        } else {
+            //Check for next parent
+            var nextParent = parentRec[fieldName].getRefRecord();
+            if (nextParent && nextParent.isValidRecord()) {
+                //Test the next level
+                checkCircularRelationship(nextParent, child, fieldName);
+            }
+        }
+    },
+
+    testConnection: function(urlInstance) {
+        var connectionUp = false;
+
+        //Check if connection is UP
+        //code here
+        //If connection is UP -> set connectionUp = true;
+
+        //If the current parent being evaluated matches the child then abort
+        if (connectionUp) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //type: 'ValidationUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-07-01 10:23:05</sys_created_on>
+        <sys_id>67618720dbfd1010999cae5a4896194a</sys_id>
+        <sys_mod_count>83</sys_mod_count>
+        <sys_name>ValidationUtils</sys_name>
+        <sys_package display_value="My Hotel" source="x_hotel">a8f395beebc522004fcde08a5206fe2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="My Hotel">a8f395beebc522004fcde08a5206fe2e</sys_scope>
+        <sys_update_name>sys_script_include_67618720dbfd1010999cae5a4896194a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-07-02 20:11:04</sys_updated_on>
+    </sys_script_include>
+</record_update>
